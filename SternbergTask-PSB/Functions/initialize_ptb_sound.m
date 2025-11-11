@@ -1,4 +1,4 @@
-function pahandle = initialize_ptb_sound(fs, nchannels, maxSecs)
+function pahandle = initialize_ptb_sound(fs, nchannels, maxsecs)
 % -------------------------------------------------------------------------
 % initialize_ptb_sound  |  Sergio - Sternberg WM Task Helper
 %
@@ -25,5 +25,5 @@ catch
 end
 
 pahandle = PsychPortAudio('Open', [], 2, 1, fs, nchannels, 0);
-PsychPortAudio('GetAudioData', pahandle, maxSecs);  % pre-fill buffer
+PsychPortAudio('GetAudioData', pahandle, maxsecs);  % pre-fill buffer
 end

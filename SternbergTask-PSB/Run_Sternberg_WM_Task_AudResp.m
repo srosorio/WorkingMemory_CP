@@ -1,4 +1,4 @@
-function Run_Sternberg_WM_Task_KeyResp()
+function Run_Sternberg_WM_Task_AudResp()
 %*************************************************************************
 % Alavie Mirfathollahi - 2025 -  Sternberg WM task
 %*************************************************************************
@@ -55,7 +55,7 @@ try
     send_trigger('init', P);
     
     % initalize PsychPortAudio 
-    pahandle = initialize_ptb_audio(P.audio.fs, P.audio.nchannels, P.audio.maxsecs);
+    pahandle = initialize_ptb_sound(P.audio.fs, P.audio.nchannels, P.audio.maxsecs);
 
     % --- basic sanity checks on code arrays
     assert(numel(C.DIGIT_ON_IDX)        >= P.numDigits,        'Codes: DIGIT_ON_IDX too short');
@@ -184,7 +184,7 @@ try
                 @(w) redraw_distractor_frame(w, P, S, D));
 
             deadline = t_dist_on + P.distractor_window;
-            Rtf      = get_tf_response(P, deadline);  % subject responds T/F
+            Rtf      = get_tf_vocal_response(P, deadline, pahandle);  % subject responds T/F
 
             if Rtf.madeResponse
                 % ---------- user responded ----------
