@@ -100,6 +100,15 @@ P.input.responseBox      = false;                                          % fut
 P.input.keyboardOK       = true;                                           % always allow keyboard fallback
 P.input.useKeyboard      = [];                                             % [] → decide later / ask
 
+%% -------------------- Audio parameters ----------------------------------
+P.audio.fs               = 16000;                                          
+P.audio.nchannels        = 1;
+P.audio.bits             = 16;
+P.audio.maxSecs          = 4;
+P.audio.threshold        = 0.15;                                           % future: create function
+P.audio.silenceDuration  = 0.3;
+P.audio.postSilence      = .5;
+P.audio.chunkSec         = 0.01;                                           
 %% -------------------- Screen preferences (base) -------------------------
 try
     whichScreen = max(Screen('Screens'));
