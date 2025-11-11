@@ -235,7 +235,7 @@ P.probe.postprobe_range    = [1.0, 1.5];
 P.Text.taskCondition       = 'Same Order';                                 % Same Order | Reverse Order
 
 %% -------------------- Pre-task UI (subject info dialog) -----------------
-[P, confirmed] = get_task_info_UI(P);
+[P, confirmed] = get_task_info_ui(P);
 if ~confirmed
     error('------- User cancelled experiment setup.');
 end

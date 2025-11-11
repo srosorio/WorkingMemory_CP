@@ -57,7 +57,7 @@ addpath(fullfile(currentFolder, 'Functions'));
 %  Run Main Experiment Script
 % -------------------------------------------------------------------------
 % Replace the script name below with the correct task version as needed.
-Run_Sternberg_WM_Task_KeyResp;
+Run_Sternberg_WM_Task_AudResp;
 
 %% End of Script (Alavie)
 % =========================================================================
