@@ -1,0 +1,9 @@
+| Phase                  | Description                                           |
+| ---------------------- | ----------------------------------------------------- |
+| **Start**              | “Press any key to start” (logged and trigger-aligned) |
+| **Fixation 1**         | Baseline fixation (jittered)                          |
+| **Digit Presentation** | Sequence of digits (0–9), each 0.5 s                  |
+| **Distractor**         | Arithmetic distractor (`a + b = x` → True/False)      |
+| **Fixation 2**         | Post-distractor fixation                              |
+| **Probe/Recall**       | Enter digits back (slot-based or `?` mode)            |
+| **End**                | Block and session completion markers                  |

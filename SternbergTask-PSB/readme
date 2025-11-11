@@ -1,0 +1,68 @@
+This folder contains MATLAB–Psychtoolbox code for the Sternberg Working Memory task used in the Parkinson’s disease (PD) study.
+
+Instructions:
+
+1. Run the main script:
+   Sternberg_WM
+
+2. Make sure to add the functions/ folder to your MATLAB path before running the task.
+
+The scripts in this folder handle stimulus presentation, response collection, and synchronization with external devices.
+
+---
+
+# Alavie Mirfathollahi (Oehrnlab @ UCDavis) – Sternberg Working Memory Task 
+
+This repository contains the complete **MATLAB + Psychtoolbox** implementation of the **Sternberg Working-Memory Task** 
+It is designed for **EEG**, **EyeLink**, or **combined multimodal recordings**, with precise **trigger, photodiode, and behavioral event logging**.
+
+---
+
+## Overview
+
+This task implements a flexible **working-memory paradigm** with:
+- Encoding, distractor, and recall (probe) phases  
+- Precise **event triggers** for EEG synchronization (Brain Products TriggerBox)  
+- Optional **EyeLink 1000** eye-tracker support  
+- Real-time **photodiode patch** for stimulus-onset verification  
+- Automatic **CSV logging** with wall-clock and relative timestamps  
+
+All experiment settings are defined by a single parameter structure (`P`) created by `make_params`, ensuring reproducibility across sessions and hardware setups.
+
+---
+
+## Core Components
+
+| File | Description |
+|------|--------------|
+| **`make_params.m`** | Central configuration for run profiles (`test`, `eeg`, `eyetracker`, `both`). Defines timing, screen, trigger, and photodiode options. |
+| **`make_event_codes.m`** | Defines all TTL trigger codes (8-bit safe, unique 1–255). |
+| **`event_logger.m`** | Logs every event with absolute and relative timing, inter-event duration, and metadata to CSV. |
+| **`send_trigger.m`** | Handles Brain Products TriggerBox communication (mock-safe for development). |
+| **`open_ptb_screen.m`** | Opens a true fullscreen Psychtoolbox window with DPI-safe fallbacks and hardware-specific handling. |
+| **`wait_for_start.m`** | Displays the “Press any key to start” page and logs start events. |
+| **`generate_distractor.m` / `redraw_distractor_frame.m`** | Builds and draws arithmetic distractor trials (`a + b = x`) with True/False options. |
+| **`get_tf_response.m` / `get_single_digit.m`** | Waits for behavioral responses (keyboard J/F or digits 0–9). RB path stub included. |
+| **`redraw_probe_slots_frame_centeredR_Gray.m`** | Probe-phase display: centered active slot, gray left-aligned history, optional “?”. |
+| **`redraw_probe_question_only.m`** | Minimal recall mode showing only a centered “?” between inputs. |
+| **`draw_fixation.m`, `clear_to_bg.m`, `redraw_fixation_frame.m`, `redraw_blank_frame.m`, `draw_digit.m`, `redraw_digit_frame.m`** | Modular drawing utilities for fixation crosses, digits, and blank frames. |
+| **`tf_label.m`** | Utility to convert logicals → `'T'/'F'` and `'True'/'False'` labels. |
+
+---
+
+## Supported Hardware
+
+| Device | Description |
+|---------|-------------|
+| **EEG** | Brain Products ActiChamp + TriggerBox (TTL via COM port) |
+| **Eye-tracker** | SR Research EyeLink 1000 (Ethernet) |
+| **Photodiode** | White patch (top-left corner) for stimulus timing validation |
+| **Response** | Keyboard (J/F or digits 0–9), ResponseBox stub ready |
+
+Can Select your configuration with:
+
+```matlab
+P = make_params('test');        % simple debug mode
+P = make_params('eeg');         % EEG + triggers + photodiode
+P = make_params('eyetracker');  % EyeLink only
+P = make_params('both');        % EEG + EyeLink (main recordings)
