@@ -53,6 +53,9 @@ try
 
     % triggerbox init (start of session)
     send_trigger('init', P);
+    
+    % initalize PsychPortAudio 
+    pahandle = initialize_ptb_audio(P.audio.fs, P.audio.nchannels, P.audio.maxsecs);
 
     % --- basic sanity checks on code arrays
     assert(numel(C.DIGIT_ON_IDX)        >= P.numDigits,        'Codes: DIGIT_ON_IDX too short');
