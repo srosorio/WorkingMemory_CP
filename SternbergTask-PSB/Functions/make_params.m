@@ -173,9 +173,10 @@ switch runProfile
         P.mock.eyelink             = true;                                 % no eyetracker
         P.mock.responsebox         = true;                                 % keyboard
 
-        P.trigger.mode             = 'TriggerBox';
+        P.trigger.mode             = 'Biosemi';
+        P.trigger.portAddress      = hex2dec('0378');
         P.trigger.pulseMs          = 10;
-        P.trigger.comPort          = 'COM5';                               % need to set per machine
+        P.trigger.comPort          = 'COM6';                               % need to set per machine
         P.trigger.serial.baud      = 2000000;
         P.trigger.idleLevel        = uint8(0);
         P.trigger.resetLevel       = 255;
