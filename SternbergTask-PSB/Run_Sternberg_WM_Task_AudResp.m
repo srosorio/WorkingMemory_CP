@@ -50,7 +50,7 @@ try
     P = make_params('eeg','OFFmed_OFFstim','S01');                         % can change subject/session here (also in the UI)
     C = make_event_codes();
     L = event_logger('init', P, C);
-
+    P.audio.threshold = autoselect_mic_threshold(P, 0);
     % triggerbox init (start of session)
     send_trigger('init', P);
     

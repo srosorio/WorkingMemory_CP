@@ -108,7 +108,10 @@ P.audio.maxsecs          = 4;
 P.audio.threshold        = 0.15;                                           % future: create function
 P.audio.silenceDuration  = 0.3;
 P.audio.postSilence      = .5;
-P.audio.chunkSec         = 0.01;                                           
+P.audio.chunkSec         = 0.01;     
+P.audio.noiseSecs        = 3;
+P.audio.speechSecs       = 5;
+P.audio.noiseMultiplier  = 5;
 %% -------------------- Screen preferences (base) -------------------------
 try
     whichScreen = max(Screen('Screens'));

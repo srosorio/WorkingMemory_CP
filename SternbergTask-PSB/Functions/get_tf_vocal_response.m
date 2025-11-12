@@ -84,5 +84,6 @@ nPost = round(postSilence * fs);
 audioAll = [audioAll; zeros(nPost,1)];
 
 R.audio = audioAll;
+R.isTrue = false;  % placeholder logical (so tf_label won’t error)
 
 end
