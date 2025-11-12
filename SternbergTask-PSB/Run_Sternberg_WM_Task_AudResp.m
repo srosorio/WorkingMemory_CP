@@ -277,7 +277,7 @@ try
             for k = 1:P.probe_max_digits
 
                 % 1) wait for user to enter a single digit (with deadline)
-                R = get_single_digit(tDeadline, P);
+                R = get_single_digit_vocal(tDeadline, P, pahandle);
                 if R.quit
                     error('User pressed ESCAPE during PROBE.');
                 end
@@ -341,8 +341,14 @@ try
             end
 
             % --- PROBE DONE ---
+            if ismissing(entered) || strlength(entered) == 0
+                enteredStr = '';
+            else
+                enteredStr = char(entered);
+            end
+            
             event_logger('add', L, 'PROBE_DONE', C.PROBE_DONE, GetSecs(), 0, ...
-                struct('value', char(entered), 'note', 'probe complete'));
+                struct('value', enteredStr, 'note', 'probe complete'));
 
             % -----------------------------------------------------------------
             % NOTE:
