@@ -1,4 +1,4 @@
-function threshold = autoselect_mic_threshold(P, plotFlag)
+function threshold = autoselect_mic_threshold(L, S, C, P, plotFlag)
 % -------------------------------------------------------------------------
 % autoselect_micresponse_threshold  |  PTB display version
 %
@@ -22,18 +22,10 @@ try
     speechSecs      = P.audio.speechSecs;
     noiseMultiplier = P.audio.noiseMultiplier;
 
-    %% --- Open PTB Screen ---
-    Screen('Preference', 'SkipSyncTests', 1);
-    [win, rect] = Screen('OpenWindow', 0, 0);   % black screen
-    Screen('TextSize', win, 32);
-    Screen('TextFont', win, 'Arial');
-    xCenter = rect(3)/2;
-    yCenter = rect(4)/2;
-
     %% --- Step 1: Record ambient noise ---
-    DrawFormattedText(win, sprintf('Step 1:\n\nStay silent for %d seconds...', noiseSecs), ...
-        'center', 'center', [255 255 255]);
-    Screen('Flip', win);
+    % Show mic test instructions
+    [~, L] = markEvent(P, L, S, C.TEST_NOISEFLOOR, 'START_PAGE_ON', struct(), ...
+        @(w) DrawFormattedText(w, 'Step 1:\n\nStay silent for 3 seconds...', 'center', 'center', P.screen.textColor));
 
     recNoise = audiorecorder(fs, bits, nChannels);
     recordblocking(recNoise, noiseSecs);
@@ -47,10 +39,8 @@ try
     threshold = noiseMultiplier * noiseRMS;
 
     %% --- Step 3: Record speech sample ---
-    DrawFormattedText(win, sprintf('Step 2:\n\nSpeak now after the beep for %d seconds...', speechSecs), ...
-        'center', 'center', [255 255 255]);
-    Screen('Flip', win);
-    pause(0.5);
+    [~, L] = markEvent(P, L, S, C.TEST_SPEECH, 'START_PAGE_ON', struct(), ...
+        @(w) DrawFormattedText(w, 'Step 2:\n\nNow count from 1 to 3...', 'center', 'center', P.screen.textColor));
 
     recSpeech = audiorecorder(fs, bits, nChannels);
     recordblocking(recSpeech, speechSecs);
@@ -58,9 +48,7 @@ try
     speechData = getaudiodata(recSpeech);
     speechRMS  = rms(speechData);
     speechMax  = max(abs(speechData));
-    Screen('Flip', win);
-    WaitSecs(3);
-    sca;
+
     %% --- Step 5: Plot if requested ---
     if plotFlag
         

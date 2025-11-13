@@ -27,6 +27,11 @@ C.SESSION_END       = 3;    % experiment ended cleanly
 C.START_PAGE_ON     = 4;    % "Press any key to start" screen shown
 C.START_KEYPRESS    = 5;    % subject/experimenter actually pressed start
 
+%% ------------------------------------------------------------------------
+%  MIC SET UP
+C.TEST_NOISEFLOOR   = 6;
+C.TEST_SPEECH       = 7;
+% -------------------------------------------------------------------------
 
 %% ------------------------------------------------------------------------
 %  BLOCK / TRIAL FLOW

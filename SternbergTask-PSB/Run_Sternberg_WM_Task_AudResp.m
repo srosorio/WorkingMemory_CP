@@ -18,7 +18,7 @@ function Run_Sternberg_WM_Task_AudResp()
 %   - choose_input_mode (if used inside make_params)
 %   - make_event_codes
 %   - event_logger
-%   - send_trigger_biosemi
+%   - send_trigger
 %   - open_ptb_screen
 %   - wait_for_start
 %   - redraw_* helpers (fixation, blank, digit, distractor, probe, ...)
@@ -50,9 +50,9 @@ try
     P = make_params('eeg','OFFmed_OFFstim','S01');                         % can change subject/session here (also in the UI)
     C = make_event_codes();
     L = event_logger('init', P, C);
-    P.audio.threshold = autoselect_mic_threshold(P, 0);
+    
     % triggerbox init (start of session)
-    send_trigger_biosemi('init', P);
+    send_trigger('init', P);
     
     % initalize PsychPortAudio 
     pahandle = initialize_ptb_sound(P.audio.fs, P.audio.nchannels, P.audio.maxsecs);
@@ -72,6 +72,11 @@ try
     L.refresh_hz = 1 / S.ifi;
 
     %% --------------------------------------------------------------------
+    % 2.1) Gec Microphone threshold
+    %% --------------------------------------------------------------------
+    P.audio.threshold = autoselect_mic_threshold(L, S, C, P, 0);
+
+    %% --------------------------------------------------------------------
     % 3) START PAGE (via markEvent → PD+trigger same frame)
     %% --------------------------------------------------------------------
     Text_to_show_at_the_start = [P.Text.taskCondition, '\n\n', P.start.message];
@@ -85,7 +90,7 @@ try
 
     % mark keypress
     if ~P.mock.triggerbox
-        send_trigger_biosemi('send', P, C.START_KEYPRESS, P.trigger.pulseMs);
+        send_trigger('send', P, C.START_KEYPRESS, P.trigger.pulseMs);
     end
 
     % session start in logger
@@ -93,7 +98,7 @@ try
 
     % quick sanity pulse (if trigger is connected)
     try
-        send_trigger_biosemi('send', P, C.SANITY_PULSE, 10);
+        send_trigger('send', P, C.SANITY_PULSE, 10);
     catch ME
         fprintf('[Trigger sanity pulse failed] %s\n', ME.message);
         error
@@ -111,7 +116,7 @@ try
         % ----- block start -----
         event_logger('add', L, 'BLOCK_START', C.BLOCK_START, GetSecs(), 0, struct());
         if ~P.mock.triggerbox
-            send_trigger_biosemi('send', P, C.BLOCK_START, P.trigger.pulseMs);
+            send_trigger('send', P, C.BLOCK_START, P.trigger.pulseMs);
         end
 
         for t = 1:nTrials
@@ -121,7 +126,7 @@ try
             event_logger('add', L, 'TRIAL_CHANGE', C.TRIAL_CHANGE, GetSecs(), 0, struct('note','trial transition'));
             event_logger('add', L, 'TRIAL_START',  C.TRIAL_START,  GetSecs(), 0, struct());
             if ~P.mock.triggerbox
-                send_trigger_biosemi('send', P, C.TRIAL_START, P.trigger.pulseMs);
+                send_trigger('send', P, C.TRIAL_START, P.trigger.pulseMs);
             end
 
             %% =========================================================
@@ -208,7 +213,7 @@ try
 
                 % also send trigger for distractor answer
                 if ~P.mock.triggerbox
-                    send_trigger_biosemi('send', P, C.DISTRACTOR_ANS, P.trigger.pulseMs);
+                    send_trigger('send', P, C.DISTRACTOR_ANS, P.trigger.pulseMs);
                 end
 
                 % correctness flags
@@ -295,7 +300,7 @@ try
                            'rt', R.tPress - tProbeStart, 'note', sprintf('probe_digit#%d', k)));
 
                 % 3) trigger for this digit
-                send_trigger_biosemi('send', P, C.DIGIT_RECALL_INPUT(k), P.trigger.pulseMs);
+                send_trigger('send', P, C.DIGIT_RECALL_INPUT(k), P.trigger.pulseMs);
 
                 % 4) after entry: clear "?" or update display
                 if strcmpi(P.probe.displayStyle, 'question')
@@ -363,7 +368,7 @@ try
             %% =========================================================
             event_logger('add', L, 'TRIAL_END', C.TRIAL_END, GetSecs(), 0, struct());
             if ~P.mock.triggerbox
-                send_trigger_biosemi('send', P, C.TRIAL_END, P.trigger.pulseMs);
+                send_trigger('send', P, C.TRIAL_END, P.trigger.pulseMs);
             end
 
         end % trial loop
@@ -373,7 +378,7 @@ try
         %% -------------------------------------------------------------
         event_logger('add', L, 'BLOCK_END', C.BLOCK_END, GetSecs(), 0, struct());
         if ~P.mock.triggerbox
-            send_trigger_biosemi('send', P, C.BLOCK_END,  P.trigger.pulseMs);
+            send_trigger('send', P, C.BLOCK_END,  P.trigger.pulseMs);
         end
     end % block loop
 
@@ -387,7 +392,7 @@ try
     end
     event_logger('add', L, 'SESSION_END', C.SESSION_END, GetSecs(), 0, struct());
     event_logger('close', L);
-    send_trigger_biosemi('close', P);
+    send_trigger('close', P);
 
     fprintf('[OK] Step 5 complete. Check CSV for *_ON/OFF with stable visuals.\n');
 
@@ -395,7 +400,7 @@ catch ME
     % Error handling
     try, ShowCursor; Priority(0); sca; end
     try, event_logger('close', L); end
-    try, send_trigger_biosemi('close', P); end
+    try, send_trigger('close', P); end
     rethrow(ME);
 end
 end
