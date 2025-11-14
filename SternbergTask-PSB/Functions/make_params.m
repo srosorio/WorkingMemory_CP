@@ -282,8 +282,11 @@ end
 % NOTE: this uses P.runProfile below, so make sure caller passes it consistently
 path_save_CSV = [char(P.runProfile), '\', P.subjectID, '\', P.condition];
 
-P.saveDir  = fullfile(pwd, 'output', path_save_CSV);
+P.saveDir       = fullfile(pwd, 'output', path_save_CSV);
+P.audio.saveDir = fullfile(pwd, 'output', path_save_CSV, 'AudioFiles');
+
 if ~exist(P.saveDir,'dir'), mkdir(P.saveDir); end
+if ~exist(P.audio.saveDir,'dir'), mkdir(P.audio.saveDir); end
 
 P.csvFile  = sprintf('%s_%s__%s_%s_%s_events.csv', ...
     P.subjectID, ...

@@ -189,7 +189,7 @@ try
                 @(w) redraw_distractor_frame(w, P, S, D));
 
             deadline = t_dist_on + P.distractor_window;
-            Rtf      = get_tf_vocal_response(P, deadline, pahandle);  % subject responds T/F
+            Rtf      = get_tf_response_vocal(P, L, deadline, pahandle);  % subject responds T/F
 
             if Rtf.madeResponse
                 % ---------- user responded ----------
@@ -282,7 +282,7 @@ try
             for k = 1:P.probe_max_digits
 
                 % 1) wait for user to enter a single digit (with deadline)
-                R = get_single_digit_vocal(tDeadline, P, pahandle);
+                R = get_single_digit_vocal(tDeadline, P, L, k, pahandle);
                 if R.quit
                     error('User pressed ESCAPE during PROBE.');
                 end

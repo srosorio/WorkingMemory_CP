@@ -1,4 +1,4 @@
-function R = get_single_digit_vocal(deadlineAbs, P, pahandle)
+function R = get_single_digit_vocal(deadlineAbs, P, L, k, pahandle)
 % -------------------------------------------------------------------------
 % get_single_digit_vocal | Sergio - Sternberg WM Task (vocal recall version)
 %
@@ -87,6 +87,10 @@ PsychPortAudio('Stop', pahandle);
 nPostSamples = round(postSilence * fs);
 audioAll = [audioAll; zeros(nPostSamples,1)];
 
-R.audioData = audioAll;
+% save audio file
+audioFileName = fullfile(P.audio.saveDir, sprintf('%s_Block0%s_Trial0%s_Digit0%s.wav', P.subjectID, num2str(L.block), num2str(L.trial), num2str(k) ));
+
+% Write waveform to WAV file
+audiowrite(audioFileName, audioAll, fs);
 
 end

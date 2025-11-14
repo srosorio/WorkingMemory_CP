@@ -1,4 +1,4 @@
-function R = get_tf_vocal_response(P, deadlineAbs, pahandle)
+function R = get_tf_response_vocal(P, L, deadlineAbs, pahandle)
 % -------------------------------------------------------------------------
 % get_tf_response_vocal | Sternberg WM Task (vocal-response version)
 %
@@ -83,7 +83,12 @@ PsychPortAudio('Stop', pahandle);
 nPost = round(postSilence * fs);
 audioAll = [audioAll; zeros(nPost,1)];
 
-R.audio = audioAll;
+% save audio file
+audioFileName = fullfile(P.audio.saveDir, sprintf('%s_Block0%s_Trial0%s_TrueFalse.wav', P.subjectID, num2str(L.block), num2str(L.trial)));
+
+% Write waveform to WAV file
+audiowrite(audioFileName, audioAll, fs);
+
 R.isTrue = false;  % placeholder logical (so tf_label won’t error)
 
 end
