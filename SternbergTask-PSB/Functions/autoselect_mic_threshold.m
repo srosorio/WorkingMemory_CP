@@ -29,6 +29,11 @@ try
     
     event_logger('add', L, 'TEST_NOISEFLOOR', C.TEST_NOISEFLOOR, GetSecs(), 0, struct());
 
+    % mark event
+    if ~P.mock.triggerbox
+        send_trigger('send', P, C.TEST_NOISEFLOOR, P.trigger.pulseMs);
+    end
+
     recNoise = audiorecorder(fs, bits, nChannels);
     recordblocking(recNoise, noiseSecs);
 
