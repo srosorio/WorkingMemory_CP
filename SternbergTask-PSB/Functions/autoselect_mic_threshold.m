@@ -24,8 +24,10 @@ try
 
     %% --- Step 1: Record ambient noise ---
     % Show mic test instructions
-    [~, L] = markEvent(P, L, S, C.TEST_NOISEFLOOR, 'START_PAGE_ON', struct(), ...
+    [~, L] = markEvent(P, L, S, C.TEST_NOISEFLOOR, 'TEST_NOISEFLOOR', struct(), ...
         @(w) DrawFormattedText(w, 'Step 1:\n\nStay silent for 3 seconds...', 'center', 'center', P.screen.textColor));
+    
+    event_logger('add', L, 'TEST_NOISEFLOOR', C.TEST_NOISEFLOOR, GetSecs(), 0, struct());
 
     recNoise = audiorecorder(fs, bits, nChannels);
     recordblocking(recNoise, noiseSecs);
@@ -37,17 +39,6 @@ try
 
     %% --- Step 2: Compute threshold ---
     threshold = noiseMultiplier * noiseRMS;
-
-    %% --- Step 3: Record speech sample ---
-    [~, L] = markEvent(P, L, S, C.TEST_SPEECH, 'START_PAGE_ON', struct(), ...
-        @(w) DrawFormattedText(w, 'Step 2:\n\nNow count from 1 to 3...', 'center', 'center', P.screen.textColor));
-
-    recSpeech = audiorecorder(fs, bits, nChannels);
-    recordblocking(recSpeech, speechSecs);
-
-    speechData = getaudiodata(recSpeech);
-    speechRMS  = rms(speechData);
-    speechMax  = max(abs(speechData));
 
     %% --- Step 5: Plot if requested ---
     if plotFlag
