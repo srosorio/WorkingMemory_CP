@@ -74,7 +74,7 @@ try
     %% --------------------------------------------------------------------
     % 2.1) Gec Microphone threshold
     %% --------------------------------------------------------------------
-    P.audio.threshold = autoselect_mic_threshold(L, S, C, P, 0);
+    P.audio.threshold = autoselect_mic_threshold(L, S, C, P);
 
     %% --------------------------------------------------------------------
     % 3) START PAGE (via markEvent → PD+trigger same frame)

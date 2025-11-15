@@ -1,4 +1,4 @@
-function threshold = autoselect_mic_threshold(L, S, C, P, plotFlag)
+function threshold = autoselect_mic_threshold(L, S, C, P)
 % -------------------------------------------------------------------------
 % autoselect_micresponse_threshold  |  PTB display version
 %
@@ -44,24 +44,6 @@ try
 
     %% --- Step 2: Compute threshold ---
     threshold = noiseMultiplier * noiseRMS;
-
-    %% --- Step 5: Plot if requested ---
-    if plotFlag
-        
-        tNoise = (1:length(noiseData))/fs;
-        tSpeech = (1:length(speechData))/fs;
-
-        figure('Name','Noise and Speech Measurement','Color','w');
-        subplot(2,1,1);
-        plot(tNoise, noiseData); hold on;
-        yline(threshold, 'r--', 'Threshold');
-        title('Ambient Noise'); xlabel('Time (s)'); ylabel('Amplitude');
-
-        subplot(2,1,2);
-        plot(tSpeech, speechData); hold on;
-        yline(threshold, 'r--', 'Threshold');
-        title('Speech Sample'); xlabel('Time (s)'); ylabel('Amplitude');
-    end
 
 catch ME
     try sca; end

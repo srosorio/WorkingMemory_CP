@@ -47,7 +47,7 @@ end
 %% 3) Global PTB prefs (verbosity, sync, gamma)
 Screen('Preference','Verbosity',        4);               % more logs while debugging
 Screen('Preference','VisualDebugLevel', 3);               % PTB splash + timing
-Screen('Preference','SkipSyncTests',    2);
+Screen('Preference','SkipSyncTests',    P.screen.whichScreen);
 PsychDefaultSetup(2);                                      % blending/gamma defaults
 
 %% 4) Target screen + expected rect
