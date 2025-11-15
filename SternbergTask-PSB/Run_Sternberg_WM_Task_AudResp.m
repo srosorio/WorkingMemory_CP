@@ -1,4 +1,4 @@
-function Run_Sternberg_WM_Task_AudResp()
+function Run_Sternberg_WM_Task_AudResp(threshold)
 %*************************************************************************
 % Alavie Mirfathollahi - 2025 -  Sternberg WM task
 %*************************************************************************
@@ -74,8 +74,8 @@ try
     %% --------------------------------------------------------------------
     % 2.1) Gec Microphone threshold
     %% --------------------------------------------------------------------
-    P.audio.threshold = autoselect_mic_threshold(L, S, C, P);
-
+    P.audio.threshold = threshold; 
+    
     %% --------------------------------------------------------------------
     % 3) START PAGE (via markEvent → PD+trigger same frame)
     %% --------------------------------------------------------------------

@@ -52,12 +52,12 @@ addpath(fullfile(currentFolder, 'Functions'));
 % send_trigger_selftest(P);    % Sends pulses 10, 20, 40, 80 (visible in Recorder)
 %
 % -------------------------------------------------------------------------
-
+threshold = test_mic_response();
 %% -------------------------------------------------------------------------
 %  Run Main Experiment Script
 % -------------------------------------------------------------------------
 % Replace the script name below with the correct task version as needed.
-Run_Sternberg_WM_Task_AudResp;
+Run_Sternberg_WM_Task_AudResp(threshold);
 
 %% End of Script (Alavie)
 % =========================================================================
