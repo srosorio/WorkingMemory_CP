@@ -15,6 +15,8 @@ try
     outputFigFile   = 'Noise_Speech_Measurement.png'; % File to save figure
 
     % --- Open PTB screen ---
+    Screen('Preference', 'VisualDebugLevel', 0);
+    Screen('Preference','SkipSyncTests', 1);
     [win, rect] = Screen('OpenWindow', max(Screen('Screens')), 0); % black background
     
     % Set text size and font to match rest of experiment
