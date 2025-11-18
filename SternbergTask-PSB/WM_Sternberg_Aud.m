@@ -1,7 +1,7 @@
 %% =========================================================================
 %% Working Memory – Sternberg Task
-%  Alavie
-%  Project: WorkingMemory_PD
+%  Alavie / Sergio
+%  Project: WorkingMemory_CP
 %  Description:
 %     MATLAB–Psychtoolbox implementation of the Sternberg Working Memory task
 %     for Parkinson's disease research. This version synchronizes with EEG 
@@ -51,6 +51,8 @@ addpath(fullfile(currentFolder, 'Functions'));
 % P = make_params('eeg', 'OFFmed_OFFstim', 'TEST_SUBJ');
 % send_trigger_selftest(P);    % Sends pulses 10, 20, 40, 80 (visible in Recorder)
 %
+%% -------------------------------------------------------------------------
+%  Run mic test code and automatic threshold detection
 % -------------------------------------------------------------------------
 threshold = test_mic_response();
 %% -------------------------------------------------------------------------
@@ -59,5 +61,5 @@ threshold = test_mic_response();
 % Replace the script name below with the correct task version as needed.
 Run_Sternberg_WM_Task_AudResp(threshold);
 
-%% End of Script (Alavie)
+%% End of Script (Alavie/Sergio)
 % =========================================================================
