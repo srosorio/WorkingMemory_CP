@@ -1,4 +1,4 @@
-function send_trigger(mode, P, code, pulseMs)
+function send_trigger_biomsemi(mode, P, code, pulseMs)
 % -------------------------------------------------------------------------
 % Alavie - Sternberg WM task
 %
@@ -35,8 +35,8 @@ if ~ismember(P.runProfile, 'test')
         % =================================================================
             % ---- read serial params from P (with safe fallbacks) ----
             port = P.trigger.comPort;
-            if isfield(P,'trigger') && isfield(P.trigger,'serial') && isfield(P.trigger.serial,'baudBP')
-                baud = P.trigger.serial.baudBP;
+            if isfield(P,'trigger') && isfield(P.trigger,'serial') && isfield(P.trigger.serial,'baud')
+                baud = P.trigger.serial.baud;
             else
                 baud = 2000000;                                            % FIX: match working example
             end
@@ -71,7 +71,8 @@ if ~ismember(P.runProfile, 'test')
                 'FlowControl=None'], baud);
 
             try
-                [fh, errmsg] = IOPort('OpenSerialPort', port, opts);
+                % [fh, errmsg] = IOPort('OpenSerialPort', port, opts);
+                s = serial(P.trigger.comPort, 'BaudRate', );
                 if ~isempty(errmsg), error('%s', errmsg); end
 
                 TB.fh     = fh;
