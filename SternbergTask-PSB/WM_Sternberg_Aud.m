@@ -43,7 +43,7 @@ sca;
 currentFolder = pwd; 
 addpath(fullfile(currentFolder, 'Functions'));
 
-%% -------------------------------------------------------------------------
+%% ---------------------------------------------------------------------*----
 %  Optional: Trigger Test
 % -------------------------------------------------------------------------
 % Uncomment the lines below to run a trigger self-test before data collection.

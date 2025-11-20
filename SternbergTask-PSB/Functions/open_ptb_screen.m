@@ -41,7 +41,7 @@ if ~isfield(P.screen,'skipSync'),    P.screen.skipSync  = 0;      end
 
 % photodiode fallback
 if ~isfield(P,'photodiode') || ~isfield(P.photodiode,'rectPix')
-    P.photodiode.rectPix = [0 0 80 80];
+    P.photodiode.rectPix = [0 0 100 100];
 end
 
 %% 3) Global PTB prefs (verbosity, sync, gamma)
@@ -120,9 +120,18 @@ Screen('BlendFunction', win, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
 ifi       = Screen('GetFlipInterval', win);
 [cx, cy]  = RectCenter(rect);
 
-%% 10) Photodiode patch (top-left)
-pd     = P.photodiode.rectPix;          % e.g. [0 0 50 50]
-pdRect = [rect(1), rect(2), rect(1)+pd(3), rect(2)+pd(4)];
+%% Photodiode patch (bottom-right)
+pd = P.photodiode.rectPix;   % [0 0 w h]
+pd_w = pd(3);
+pd_h = pd(4);
+
+right = rect(3);
+bottom = rect(4);
+
+left = right  - pd_w;
+top  = bottom - pd_h;
+
+pdRect = [left, top, left + pd_w, top + pd_h];
 
 %% 11) Return struct
 S.win    = win;
