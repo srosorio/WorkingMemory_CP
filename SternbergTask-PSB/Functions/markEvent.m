@@ -27,7 +27,7 @@ if ~isfield(S,'win') || isempty(S.win) || S.win == 0
     % still log + trigger in headless mode
     event_logger('add', L, eventName, code, t_on, 0, extra);
     if ~isfield(P,'mock') || ~isfield(P.mock,'triggerbox') || ~P.mock.triggerbox
-        send_trigger('send', P, code, P.trigger.pulseMs);
+        send_trigger_biosemi('send', P, code, P.trigger.pulseMs);
     end
     return;
 end
@@ -65,7 +65,7 @@ t_on = Screen('Flip', win);
 % 6) Send trigger AFTER the flip (for better alignment)
 % -------------------------------------------------------------------------
 if ~isfield(P,'mock') || ~isfield(P.mock,'triggerbox') || ~P.mock.triggerbox
-    send_trigger('send', P, code, P.trigger.pulseMs);
+    send_trigger_biosemi('send', P, code, P.trigger.pulseMs);
 end
 
 % -------------------------------------------------------------------------
