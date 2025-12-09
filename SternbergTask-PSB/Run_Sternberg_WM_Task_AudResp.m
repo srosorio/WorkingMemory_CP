@@ -50,11 +50,11 @@ try
     P = make_params('eeg','OFFmed_OFFstim','S01');                         % can change subject/session here (also in the UI)
     C = make_event_codes();
     L = event_logger('init', P, C);
-    
+
     % triggerbox init (start of session)
     send_trigger_biosemi('init', P);
-    
-    % initalize PsychPortAudio 
+
+    % initalize PsychPortAudio
     pahandle = initialize_ptb_sound(P.audio.fs, P.audio.nchannels, P.audio.maxsecs);
 
     % --- basic sanity checks on code arrays
@@ -69,13 +69,13 @@ try
     %% --------------------------------------------------------------------
     S = open_ptb_screen(P);
     L.ifi        = S.ifi;
-    L.refresh_hz = 1 / S.ifi; 
+    L.refresh_hz = 1 / S.ifi;
 
     %% --------------------------------------------------------------------
     % 2.1) Gec Microphone threshold
     %% --------------------------------------------------------------------
-    P.audio.threshold = threshold; 
-    
+    P.audio.threshold = threshold;
+
     %% --------------------------------------------------------------------
     % 3) START PAGE (via markEvent → PD+trigger same frame)
     %% --------------------------------------------------------------------
@@ -185,7 +185,7 @@ try
             % distractor ON (with value info logged)
             [t_dist_on, L] = markEvent(P, L, S, C.DISTRACTOR_ON, 'DISTRACTOR_ON', ...
                 struct('value', sprintf('%d+%d=%d', D.a, D.b, D.shownSum), ...
-                       'isCorrectTruth', D.isCorrect, 'trueSum', D.trueSum), ...
+                'isCorrectTruth', D.isCorrect, 'trueSum', D.trueSum), ...
                 @(w) redraw_distractor_frame_aud(w, P, S, D));
 
             deadline = t_dist_on + P.distractor_window;
@@ -261,9 +261,9 @@ try
             tProbeStart   = GetSecs();
             tDeadline     = tProbeStart + P.probe_max_total;
 
-            % --- black screen before recall (PD ON here) ---
-            [~, L] = markEvent(P, L, S, C.RECALL_BLACK_ON, 'RECALL_BLACK_ON', ...
-                struct('note','probe black page'), @(w) redraw_blank_frame(w,P));
+            % % --- black screen before recall (PD ON here) ---
+            % [~, L] = markEvent(P, L, S, C.RECALL_BLACK_ON, 'RECALL_BLACK_ON', ...
+            %     struct('note','probe black page'), @(w) redraw_blank_frame(w,P));
 
             % --- first prompt (either "?" or line style) ---
             if strcmpi(P.probe.displayStyle, 'question')
@@ -297,15 +297,32 @@ try
                 entered = entered + string(R.digit);
                 event_logger('add', L, sprintf('PROBE_DIGIT_OK_%d', k), C.PROBE_DIGIT_OK, R.tPress, 0, ...
                     struct('value', sprintf('slot#%d', k), 'entered', R.digit, ...
-                           'rt', R.tPress - tProbeStart, 'note', sprintf('probe_digit#%d', k)));
+                    'rt', R.tPress - tProbeStart, 'note', sprintf('probe_digit#%d', k)));
 
                 % 3) trigger for this digit
                 send_trigger_biosemi('send', P, C.DIGIT_RECALL_INPUT(k), P.trigger.pulseMs);
 
                 % 4) after entry: clear "?" or update display
                 if strcmpi(P.probe.displayStyle, 'question')
-                    % show plain black so subject knows the digit was accepted
-                    redraw_blank_frame(S.win, P);
+                    % --- DIGIT k OFF -> fixation ---
+                    [t_fix_on, L] = markEvent(P, L, S, C.DIGIT_OFF_IDX(k), sprintf('DIGIT%d_OFF', k), ...
+                        struct('value', d, 'note', sprintf('digit#%d off',k)), ...
+                        @(w) redraw_fixation_frame(w, P, S));
+
+                    % add alias so CSV shows post-digit fixation explicitly
+                    event_logger('add', L, sprintf('POSTDIG_FIX%d_ON', k), C.POSTDIG_FIX_ON_IDX(k), ...
+                        t_fix_on, 0, struct('note', sprintf('after digit#%d',k)));
+
+                    % hold fixation (jitter)
+                    if k < P.numDigits
+                        WaitSecs(jitter(P.postDigitFix_range));
+                    else
+                        WaitSecs(jitter(P.postDigitFix_last_range));
+                    end
+                    % --- fixation OFF ---
+                    [~, L] = markEvent(P, L, S, C.POSTDIG_FIX_OFF_IDX(k), sprintf('POSTDIG_FIX%d_OFF', k), ...
+                        struct('note', sprintf('after digit#%d',k)), ...
+                        @(w) redraw_blank_frame(w, P));
                     Screen('Flip', S.win);   % PD OFF here
                 else
                     % show all entered digits (line style)
@@ -313,12 +330,12 @@ try
                     Screen('Flip', S.win);
                 end
 
-                % 5) inter-digit gap (1–1.5 s or whatever is in params)
-                if isfield(P,'probe') && isfield(P.probe,'postprobe_range')
-                    WaitSecs(jitter(P.probe.postprobe_range));
-                else
-                    WaitSecs(1.0);
-                end
+                % % 5) inter-digit gap (1–1.5 s or whatever is in params)
+                % if isfield(P,'probe') && isfield(P.probe,'postprobe_range')
+                %     WaitSecs(jitter(P.probe.postprobe_range));
+                % else
+                %     WaitSecs(1.0);
+                % end
 
                 % 6) if we still have time and slots, show the next prompt
                 if k < P.probe_max_digits && GetSecs() < tDeadline
@@ -351,7 +368,7 @@ try
             else
                 enteredStr = char(entered);
             end
-            
+
             event_logger('add', L, 'PROBE_DONE', C.PROBE_DONE, GetSecs(), 0, ...
                 struct('value', enteredStr, 'note', 'probe complete'));
 
