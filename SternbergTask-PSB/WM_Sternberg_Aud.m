@@ -59,7 +59,7 @@ threshold = test_mic_response();
 %  Run Main Experiment Script
 % -------------------------------------------------------------------------
 % Replace the script name below with the correct task version as needed.
-Run_Sternberg_WM_Task_AudResp(threshold);
+Run_Sternberg_WM_Task_AudResp2(threshold);
 
 %% End of Script (Alavie/Sergio)
 % =========================================================================

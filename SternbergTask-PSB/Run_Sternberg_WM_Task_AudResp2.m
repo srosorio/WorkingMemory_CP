@@ -1,4 +1,4 @@
-function Run_Sternberg_WM_Task_AudResp(threshold)
+function Run_Sternberg_WM_Task_AudResp2(threshold)
 %*************************************************************************
 % Alavie Mirfathollahi - 2025 -  Sternberg WM task
 %*************************************************************************
@@ -77,34 +77,6 @@ try
     P.audio.threshold = threshold;
 
     %% --------------------------------------------------------------------
-    % 3) START PAGE (via markEvent → PD+trigger same frame)
-    %% --------------------------------------------------------------------
-    Text_to_show_at_the_start = [P.Text.taskCondition, '\n\n', P.start.message];
-
-    % Show start page using markEvent (so PD + trigger are aligned)
-    [~, L] = markEvent(P, L, S, C.START_PAGE_ON, 'START_PAGE_ON', struct(), ...
-        @(w) DrawFormattedText(w, Text_to_show_at_the_start, 'center', 'center', P.screen.textColor));
-
-    % Wait for experimenter/subject to press start
-    wait_for_start(P, S, L, C, Text_to_show_at_the_start);
-
-    % mark keypress
-    if ~P.mock.triggerbox
-        send_trigger_biosemi('send', P, C.START_KEYPRESS, P.trigger.pulseMs);
-    end
-
-    % session start in logger
-    event_logger('add', L, 'SESSION_START', C.SESSION_START, GetSecs(), 0, struct());
-
-    % quick sanity pulse (if trigger is connected)
-    try
-        send_trigger_biosemi('send', P, C.SANITY_PULSE, 10);
-    catch ME
-        fprintf('[Trigger sanity pulse failed] %s\n', ME.message);
-        error
-    end
-
-    %% --------------------------------------------------------------------
     % 4) MAIN LOOP: blocks × trials
     %% --------------------------------------------------------------------
     nBlocks = P.nBlocks;
@@ -117,6 +89,138 @@ try
         event_logger('add', L, 'BLOCK_START', C.BLOCK_START, GetSecs(), 0, struct());
         if ~P.mock.triggerbox
             send_trigger_biosemi('send', P, C.BLOCK_START, P.trigger.pulseMs);
+        end
+
+        % =========================================================
+        % PRE-BLOCK 10-DIGIT WARM-UP
+        % =========================================================
+        L.phase       = 'warmup';
+        L.trial       = 0;   % warm-up digits get "trial 0"
+        entered       = "";                         % what subject entered so far
+        visibleSlots  = 1;                          % how many recall "places" are visible
+        tProbeStart   = GetSecs();
+        tDeadline     = tProbeStart + P.probe_max_total;
+
+        Text_to_show_at_the_start = ['Say out loud each number you see', '\n\n', 'Press any key to start'];
+
+        % Show start page using markEvent (so PD + trigger are aligned)
+        [~, L] = markEvent(P, L, S, C.START_PAGE_ON, 'START_PAGE_ON', struct(), ...
+            @(w) DrawFormattedText(w, Text_to_show_at_the_start, 'center', 'center', P.screen.textColor));
+
+        % Wait for experimenter/subject to press start
+        wait_for_start(P, S, L, C, Text_to_show_at_the_start);
+
+        % mark keypress
+        if ~P.mock.triggerbox
+            send_trigger_biosemi('send', P, C.START_KEYPRESS, P.trigger.pulseMs);
+        end
+
+        % session start in logger
+        event_logger('add', L, 'SESSION_START', C.SESSION_START, GetSecs(), 0, struct());
+
+        % quick sanity pulse (if trigger is connected)
+        try
+            send_trigger_biosemi('send', P, C.SANITY_PULSE, 10);
+        catch ME
+            fprintf('[Trigger sanity pulse failed] %s\n', ME.message);
+            error
+        end
+
+        event_logger('add', L, 'CONTROL_START',  C.DIGITCOUNT_START,  GetSecs(), 0, struct());
+        if ~P.mock.triggerbox
+            send_trigger_biosemi('send', P, C.DIGITCOUNT_START, P.trigger.pulseMs);
+        end
+
+        % now start with the digits
+          for k = 1:P.probe_max_count
+            d = P.digitPool(randi(numel(P.digitPool)));
+            % --- DIGIT k ON ---
+            [~, L] = markEvent(P, L, S, C.WARMUP_DIGIT_ON_IDX(k), sprintf('DIGIT%d_ON', 1), ...
+                struct('value', d, 'note', sprintf('digit#%d shown',k)), ...
+                @(w) redraw_digit_frame(w, P, S, d));
+
+            % 1) wait for user to enter a single digit (with deadline)
+            R = get_single_digit_vocal(tDeadline, P, L, k, pahandle);
+            if R.quit
+                error('User pressed ESCAPE during PROBE.');
+            end
+            if ~R.madeResponse
+                % timeout in probe
+                event_logger('add', L, 'PROBE_TIMEOUT', C.PROBE_TIMEOUT, GetSecs(), 0, ...
+                    struct('note', sprintf('digits_entered=%s', entered)));
+                break;
+            end
+
+            % 2) log this digit
+            entered = entered + string(R.digit);
+            event_logger('add', L, sprintf('PROBE_COUNT_OK_%d', k), C.PROBE_DIGIT_OK, R.tPress, 0, ...
+                struct('value', sprintf('slot#%d', k), 'entered', R.digit, ...
+                'rt', R.tPress - tProbeStart, 'note', sprintf('probe_digit#%d', k)));
+
+            % 3) trigger for this digit
+            send_trigger_biosemi('send', P, C.COUNT_READ_ALOUD(k), P.trigger.pulseMs);
+
+            % 4) after entry: clear "?" or update display
+            if strcmpi(P.probe.displayStyle, 'question')
+                % --- DIGIT k OFF -> fixation ---
+                [t_fix_on, L] = markEvent(P, L, S, C.WARMUP_DIGIT_OFF_IDX(k), sprintf('DIGIT%d_OFF', k), ...
+                    struct('value', d, 'note', sprintf('digit#%d off',k)), ...
+                    @(w) redraw_fixation_frame(w, P, S));
+
+                % add alias so CSV shows post-digit fixation explicitly
+                event_logger('add', L, sprintf('POSTCOUNT_FIX%d_ON', k), C.POSTCOUNT_FIX_ON_IDX(k), ...
+                    t_fix_on, 0, struct('note', sprintf('after digit#%d',k)));
+
+                % hold fixation (jitter)
+                if k < P.numCounts
+                    WaitSecs(jitter(P.postDigitFix_range));
+                else
+                    WaitSecs(jitter(P.postDigitFix_last_range));
+                end
+                % --- fixation OFF ---
+                [~, L] = markEvent(P, L, S, C.POSTCOUNT_FIX_OFF_IDX(k), sprintf('POSTCOUNT_FIX%d_OFF', k), ...
+                    struct('note', sprintf('after digit#%d',k)), ...
+                    @(w) redraw_blank_frame(w, P));
+                Screen('Flip', S.win);   % PD OFF here
+            end
+
+            % 7) stop if total probe time is over
+            if GetSecs() >= tDeadline
+                break;
+            end
+        end
+
+        event_logger('add', L, 'CONTROL_END',  C.DIGITCOUNT_END,  GetSecs(), 0, struct());
+        if ~P.mock.triggerbox
+            send_trigger_biosemi('send', P, C.DIGITCOUNT_END, P.trigger.pulseMs);
+        end
+
+        %% --------------------------------------------------------------------
+        % 3) START PAGE (via markEvent → PD+trigger same frame)
+        %% --------------------------------------------------------------------
+        Text_to_show_at_the_start = [P.Text.taskCondition, '\n\n', P.start.message];
+
+        % Show start page using markEvent (so PD + trigger are aligned)
+        [~, L] = markEvent(P, L, S, C.START_PAGE_ON, 'START_PAGE_ON', struct(), ...
+            @(w) DrawFormattedText(w, Text_to_show_at_the_start, 'center', 'center', P.screen.textColor));
+
+        % Wait for experimenter/subject to press start
+        wait_for_start(P, S, L, C, Text_to_show_at_the_start);
+
+        % mark keypress
+        if ~P.mock.triggerbox
+            send_trigger_biosemi('send', P, C.START_KEYPRESS, P.trigger.pulseMs);
+        end
+
+        % session start in logger
+        event_logger('add', L, 'SESSION_START', C.SESSION_START, GetSecs(), 0, struct());
+
+        % quick sanity pulse (if trigger is connected)
+        try
+            send_trigger_biosemi('send', P, C.SANITY_PULSE, 10);
+        catch ME
+            fprintf('[Trigger sanity pulse failed] %s\n', ME.message);
+            error
         end
 
         for t = 1:nTrials
@@ -330,7 +434,7 @@ try
                     Screen('Flip', S.win);
                 end
 
-                % 6) if we still have time and slots, show the next prompt
+                % 5) if we still have time and slots, show the next prompt
                 if k < P.probe_max_digits && GetSecs() < tDeadline
                     visibleSlots = visibleSlots + 1;
 
@@ -349,7 +453,7 @@ try
                     end
                 end
 
-                % 7) stop if total probe time is over
+                % 6) stop if total probe time is over
                 if GetSecs() >= tDeadline
                     break;
                 end

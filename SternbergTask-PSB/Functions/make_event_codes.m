@@ -45,6 +45,17 @@ C.BLOCK_START_KEY   = 13;   % (optional) keypress to go to next block
 C.TRIAL_START       = 20;   % start of trial
 C.TRIAL_END         = 21;   % end of trial
 C.TRIAL_CHANGE      = 22;   % trial transition marker (log-only)
+C.DIGITCOUNT_START  = 23;   % start of digit counting sequence
+C.DIGITCOUNT_END    = 24;   % 
+
+
+%% ------------------------------------------------------------------------
+%  PRE-BLOCK 10-DIGIT WARM-UP / VOCAL CHECK
+% -------------------------------------------------------------------------
+C.WARMUP_DIGIT_ON_IDX   = [201 202 203 204 205 206 207 208 209 210];  % 10-digit ON
+C.WARMUP_DIGIT_OFF_IDX  = [211 212 213 214 215 216 217 218 219 220];  % 10-digit OFF
+C.WARMUP_FIX_ON         = 221;  % fixation ON after each digit if needed
+C.WARMUP_FIX_OFF        = 222;  % fixation OFF after each digit
 
 
 %% ------------------------------------------------------------------------
@@ -74,8 +85,10 @@ C.DIGIT_OFF_IDX     = [146 147 148 149 150];  % digit#1..#5 OFF
 % C.POSTDIG_FIX_ON  = 42;   % older generic version, not used now
 % C.POSTDIG_FIX_OFF = 43;
 
-C.POSTDIG_FIX_ON_IDX  = [151 152 153 154 155];  % after digit#k ON
-C.POSTDIG_FIX_OFF_IDX = [156 157 158 159 160];  % after digit#k OFF
+C.POSTDIG_FIX_ON_IDX    = [151 152 153 154 155];  % after digit#k ON
+C.POSTDIG_FIX_OFF_IDX   = [156 157 158 159 160];  % after digit#k OFF
+C.POSTCOUNT_FIX_ON_IDX  = 231:240;
+C.POSTCOUNT_FIX_OFF_IDX = 241:250;
 
 
 %% ------------------------------------------------------------------------
@@ -106,6 +119,7 @@ C.RECALL_BLACK_ON   = 74;   % black page right before first recall prompt
 % shown when a new recall slot / question mark is displayed
 C.DIGIT_RECALL_LINE  = [161 162 163 164 165];  % show slot/#1..#5
 C.DIGIT_RECALL_INPUT = [166 167 168 169 170];  % trigger per entered digit
+C.COUNT_READ_ALOUD   = 171:180;
 
 % legacy / experimental
 C.PROBE_LINE_ON      = 70;   % legacy (refresh line)

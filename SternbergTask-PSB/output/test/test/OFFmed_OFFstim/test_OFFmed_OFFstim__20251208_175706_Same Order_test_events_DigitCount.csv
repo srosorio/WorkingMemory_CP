@@ -1,1 +1,2 @@
 file_version,subject,condition,session,task_start_time,block,trial,phase,event_name,event_code,wall_clock,t_rel_sec,duration_to_next,rt,value_shown,entered_value,correct,key_name,device,note,json,screen_index,ifi,refresh_hz,pd_used
+Alavie_G01_CNS-DDJXM3V64,test,OFFmed_OFFstim,20251208_175706,2025-12-08 17:57:11.599476,1,1,digit_task,digit_fix_start,20,2025-12-08 17:57:31.507171,19.889913,NaN,,,,,,keyboard,,{},2,0.016669,59.991248,1

@@ -44,7 +44,7 @@ try
     fprintf('\n\nRecommended threshold for vocal response detection %d seconds...', threshold);
 
     %% --- Step 3: Record speech sample ---
-    DrawFormattedText(win, sprintf('Step 2:\n\nSpeak now after the beep (%d seconds)...', speechSecs), ...
+    DrawFormattedText(win, sprintf('Step 2:\n\nCount from 1 to 3 out loud (%d seconds)...', speechSecs), ...
         'center','center', textColor);
     Screen('Flip', win);
     WaitSecs(0.5);
@@ -55,8 +55,8 @@ try
     recordblocking(recSpeech, speechSecs);
 
     speechData = getaudiodata(recSpeech);
-    speechRMS = rms(speechData);
-    speechMax = max(abs(speechData));
+    % speechRMS = rms(speechData);
+    % speechMax = max(abs(speechData));
 
     %% --- Step 4: Playback ---
     DrawFormattedText(win, 'Playback of captured speech...', 'center','center', textColor);
@@ -81,6 +81,8 @@ try
 
     saveas(fig, fullfile(P.audio.saveDir, outputFigFile));
     close(fig);
+
+    
 
     % Close PTB window
     sca;

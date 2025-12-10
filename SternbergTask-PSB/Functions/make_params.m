@@ -48,6 +48,7 @@ P.condition   = condition;                                                 % e.g
 %% -------------------- Blocks / Trials -----------------------------------
 P.nBlocks     = 2;                                                         % real blocks
 P.nTrials     = 10;                                                        % trials per block
+P.numCounts   = 10;
 P.numDigits   = 5;                                                         % digits per trial
 
 %% -------------------- Timing (sec) --------------------------------------
@@ -78,6 +79,7 @@ P.fix_after_dist_range   = [3, 3.5];
 % Probe / recall
 P.probe_max_total        = 100.0;                                          % was 15.0
 P.probe_max_digits       = 5;
+P.probe_max_count        = 10;
 
 %% -------------------- Randomization -------------------------------------
 P.digitPool              = 0:9;                                            % choose from 0–9
@@ -246,7 +248,7 @@ P.probe.displayStyle       = 'question';
 P.probe.postprobe_range    = [1.0, 1.5];
 
 %% -------------------- Text before start ---------------------------------
-P.Text.taskCondition       = 'Same Order';                                 % Same Order | Reverse Order
+P.Text.taskCondition       = 'Remember the numbers in the same order';                                 % Same Order | Reverse Order
 
 %% -------------------- Pre-task UI (subject info dialog) -----------------
 [P, confirmed] = get_task_info_ui(P);

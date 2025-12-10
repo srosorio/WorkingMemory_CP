@@ -65,7 +65,16 @@ switch lower(cmd)
         outDir = P.saveDir;
         if ~exist(outDir,'dir'), mkdir(outDir); end
         outCSV = fullfile(outDir, P.csvFile);
-        L.csv  = outCSV;
+        % Optional suffix
+        suffix = '';
+        if numel(varargin) >= 3 && ischar(varargin{3}) && ~isempty(varargin{3})
+            suffix = ['_' varargin{3}];
+            [~, name, ext] = fileparts(P.csvFile);
+            outCSV = fullfile(outDir, [name suffix ext]);
+            L.csv  = outCSV;
+        else
+            L.csv  = outCSV;
+        end
 
         % open CSV for writing
         L.fid = fopen(outCSV, 'w', 'n', 'UTF-8');
