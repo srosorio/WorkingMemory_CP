@@ -51,6 +51,8 @@ try
     C = make_event_codes();
     L = event_logger('init', P, C);
 
+    threshold = test_mic_response(P);
+
     % triggerbox init (start of session)
     send_trigger_biosemi('init', P);
 
@@ -94,14 +96,14 @@ try
         % =========================================================
         % PRE-BLOCK 10-DIGIT WARM-UP
         % =========================================================
-        L.phase       = 'warmup';
+        L.phase       = 'reading';
         L.trial       = 0;   % warm-up digits get "trial 0"
         entered       = "";                         % what subject entered so far
         visibleSlots  = 1;                          % how many recall "places" are visible
         tProbeStart   = GetSecs();
         tDeadline     = tProbeStart + P.probe_max_total;
 
-        Text_to_show_at_the_start = ['Say out loud each number you see', '\n\n', 'Press any key to start'];
+        Text_to_show_at_the_start = ['PART 1: Read aloud', '\n\n', 'Press any key to start'];
 
         % Show start page using markEvent (so PD + trigger are aligned)
         [~, L] = markEvent(P, L, S, C.START_PAGE_ON, 'START_PAGE_ON', struct(), ...
@@ -195,7 +197,7 @@ try
         %% --------------------------------------------------------------------
         % 3) START PAGE (via markEvent → PD+trigger same frame)
         %% --------------------------------------------------------------------
-        Text_to_show_at_the_start = [P.Text.taskCondition, '\n\n', P.start.message];
+        Text_to_show_at_the_start = ['Part 2: Memory', '\n\n', P.start.message];
 
         % Show start page using markEvent (so PD + trigger are aligned)
         [~, L] = markEvent(P, L, S, C.START_PAGE_ON, 'START_PAGE_ON', struct(), ...

@@ -38,7 +38,7 @@ switch lower(cmd)
 
         % ---- create logger struct ----
         L = struct();
-        L.file_version = ['Alavie_G01_', P.screen.hostname];
+        L.file_version = ['Sergio_G01_', P.screen.hostname];
         L.subject      = P.subjectID;
         L.condition    = P.condition;
         L.sessionID    = P.sessionID;

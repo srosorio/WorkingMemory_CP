@@ -54,12 +54,12 @@ addpath(fullfile(currentFolder, 'Functions'));
 %% -------------------------------------------------------------------------
 %  Run mic test code and automatic threshold detection
 % -------------------------------------------------------------------------
-threshold = test_mic_response();
+% threshold = test_mic_response();
 %% -------------------------------------------------------------------------
 %  Run Main Experiment Script
 % -------------------------------------------------------------------------
 % Replace the script name below with the correct task version as needed.
-Run_Sternberg_WM_Task_AudResp2(threshold);
+Run_Sternberg_WM_Task_AudResp_With_Control(threshold);
 
 %% End of Script (Alavie/Sergio)
 % =========================================================================

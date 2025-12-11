@@ -1,11 +1,11 @@
-function threshold = test_mic_response()
+function threshold = test_mic_response(P)
 %% Measure microphone noise floor and record speech sample with PTB screens
 % P: parameter structure containing P.screen.textSize and optionally P.screen.fontName
 close all;
 
 try
     % --- Parameters ---
-    P               = make_params('test','OFFmed_OFFstim','S01');
+    % P               = make_params('test','OFFmed_OFFstim','S01');
     fs              = 16000;          % Sampling rate (Hz)
     nChannels       = 1;       % Mono input
     bits            = 16;           % Bit depth
