@@ -248,7 +248,7 @@ P.probe.displayStyle       = 'question';
 P.probe.postprobe_range    = [1.0, 1.5];
 
 %% -------------------- Text before start ---------------------------------
-P.Text.taskCondition       = 'Remember the numbers in the same order';                                 % Same Order | Reverse Order
+P.Text.taskCondition       = 'Same Order';                                 % Same Order | Reverse Order
 
 %% -------------------- Pre-task UI (subject info dialog) -----------------
 [P, confirmed] = get_task_info_ui(P);

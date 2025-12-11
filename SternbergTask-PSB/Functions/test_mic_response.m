@@ -44,12 +44,11 @@ try
     fprintf('\n\nRecommended threshold for vocal response detection %d seconds...', threshold);
 
     %% --- Step 3: Record speech sample ---
-    DrawFormattedText(win, sprintf('Step 2:\n\nCount from 1 to 3 out loud (%d seconds)...', speechSecs), ...
+    DrawFormattedText(win, 'Step 2:\n\nCount from 1 to 3 out loud ...', ...
         'center','center', textColor);
     Screen('Flip', win);
     WaitSecs(0.5);
-    beep;
-    pause(0.5);
+    pause(1);
 
     recSpeech = audiorecorder(fs, bits, nChannels);
     recordblocking(recSpeech, speechSecs);

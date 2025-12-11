@@ -1,8 +1,0 @@
-file_version,subject,condition,session,task_start_time,block,trial,phase,event_name,event_code,wall_clock,t_rel_sec,duration_to_next,rt,value_shown,entered_value,correct,key_name,device,note,json,screen_index,ifi,refresh_hz,pd_used
-Alavie_G01_CNS-DDJXM3V64,test,OFFmed_OFFstim,20251209_172900,2025-12-09 17:29:11.866626,1,NaN,,BLOCK_START,10,2025-12-09 17:29:13.496269,1.629290,0.049762,,,,,,keyboard,,{},2,0.016667,60.000000,1
-Alavie_G01_CNS-DDJXM3V64,test,OFFmed_OFFstim,20251209_172900,2025-12-09 17:29:11.866626,1,0,warmup,START_PAGE_ON,4,2025-12-09 17:29:13.545987,1.679052,0.016629,,,,,,keyboard,,"{""pd_used"":0}",2,0.016667,60.000000,1
-Alavie_G01_CNS-DDJXM3V64,test,OFFmed_OFFstim,20251209_172900,2025-12-09 17:29:11.866626,1,0,warmup,START_PAGE_ON,4,2025-12-09 17:29:13.545987,1.679052,6.631028,,,,,,keyboard,,"{""pd_used"":0}",2,0.016667,60.000000,1
-Alavie_G01_CNS-DDJXM3V64,test,OFFmed_OFFstim,20251209_172900,2025-12-09 17:29:11.866626,1,0,warmup,START_PAGE_ON,4,2025-12-09 17:29:13.545987,1.679052,6.955018,,,,,,keyboard,,"{""pd_used"":0}",2,0.016667,60.000000,1
-Alavie_G01_CNS-DDJXM3V64,test,OFFmed_OFFstim,20251209_172900,2025-12-09 17:29:11.866626,1,0,warmup,SESSION_START,1,2025-12-09 17:29:20.501895,8.634070,0.002797,,,,,,keyboard,,{},2,0.016667,60.000000,1
-Alavie_G01_CNS-DDJXM3V64,test,OFFmed_OFFstim,20251209_172900,2025-12-09 17:29:11.866626,1,0,warmup,CONTROL_START,23,2025-12-09 17:29:20.504027,8.636867,0.026330,,,,,,keyboard,,{},2,0.016667,60.000000,1
-Alavie_G01_CNS-DDJXM3V64,test,OFFmed_OFFstim,20251209_172900,2025-12-09 17:29:11.866626,1,0,warmup,DIGIT1_ON,201,2025-12-09 17:29:20.529846,8.663197,NaN,,6,,,,keyboard,digit#1 shown,"{""value"":6,""note"":""digit#1 shown"",""pd_used"":1}",2,0.016667,60.000000,1

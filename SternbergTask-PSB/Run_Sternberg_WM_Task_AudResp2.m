@@ -115,9 +115,6 @@ try
             send_trigger_biosemi('send', P, C.START_KEYPRESS, P.trigger.pulseMs);
         end
 
-        % session start in logger
-        event_logger('add', L, 'SESSION_START', C.SESSION_START, GetSecs(), 0, struct());
-
         % quick sanity pulse (if trigger is connected)
         try
             send_trigger_biosemi('send', P, C.SANITY_PULSE, 10);
@@ -132,10 +129,10 @@ try
         end
 
         % now start with the digits
-          for k = 1:P.probe_max_count
+        for k = 1:P.probe_max_count
             d = P.digitPool(randi(numel(P.digitPool)));
             % --- DIGIT k ON ---
-            [~, L] = markEvent(P, L, S, C.WARMUP_DIGIT_ON_IDX(k), sprintf('DIGIT%d_ON', 1), ...
+            [~, L] = markEvent(P, L, S, C.WARMUP_DIGIT_ON_IDX(k), sprintf('DIGIT%d_ON', k), ...
                 struct('value', d, 'note', sprintf('digit#%d shown',k)), ...
                 @(w) redraw_digit_frame(w, P, S, d));
 
@@ -205,7 +202,7 @@ try
             @(w) DrawFormattedText(w, Text_to_show_at_the_start, 'center', 'center', P.screen.textColor));
 
         % Wait for experimenter/subject to press start
-        wait_for_start(P, S, L, C, Text_to_show_at_the_start);
+         wait_for_start(P, S, L, C, Text_to_show_at_the_start);
 
         % mark keypress
         if ~P.mock.triggerbox

@@ -1,7 +1,0 @@
-file_version,subject,condition,session,task_start_time,block,trial,phase,event_name,event_code,wall_clock,t_rel_sec,duration_to_next,rt,value_shown,entered_value,correct,key_name,device,note,json,screen_index,ifi,refresh_hz,pd_used
-Alavie_G01_CNS-DDJXM3V64,test,OFFmed_OFFstim,20251208_192815,2025-12-08 19:28:25.415077,NaN,NaN,,START_PAGE_ON,4,2025-12-08 19:28:26.401752,0.986321,0.016867,,,,,,keyboard,,"{""pd_used"":0}",2,0.016667,60.000000,1
-Alavie_G01_CNS-DDJXM3V64,test,OFFmed_OFFstim,20251208_192815,2025-12-08 19:28:25.415077,NaN,NaN,,START_PAGE_ON,4,2025-12-08 19:28:26.401752,0.986321,0.920092,,,,,,keyboard,,"{""pd_used"":0}",2,0.016667,60.000000,1
-Alavie_G01_CNS-DDJXM3V64,test,OFFmed_OFFstim,20251208_192815,2025-12-08 19:28:25.415077,NaN,NaN,,START_PAGE_ON,4,2025-12-08 19:28:26.401752,0.986321,1.251718,,,,,,keyboard,,"{""pd_used"":0}",2,0.016667,60.000000,1
-Alavie_G01_CNS-DDJXM3V64,test,OFFmed_OFFstim,20251208_192815,2025-12-08 19:28:25.415077,NaN,NaN,,SESSION_START,1,2025-12-08 19:28:27.654214,2.238038,0.002610,,,,,,keyboard,,{},2,0.016667,60.000000,1
-Alavie_G01_CNS-DDJXM3V64,test,OFFmed_OFFstim,20251208_192815,2025-12-08 19:28:25.415077,1,NaN,,BLOCK_START,10,2025-12-08 19:28:27.656041,2.240649,0.012578,,,,,,keyboard,,{},2,0.016667,60.000000,1
-Alavie_G01_CNS-DDJXM3V64,test,OFFmed_OFFstim,20251208_192815,2025-12-08 19:28:25.415077,1,0,warmup,WARMUP_DIGIT_1_ON,201,2025-12-08 19:28:27.668355,2.253227,NaN,,4,,,,keyboard,warmup digit#1,"{""value"":4,""note"":""warmup digit#1"",""pd_used"":0}",2,0.016667,60.000000,1
