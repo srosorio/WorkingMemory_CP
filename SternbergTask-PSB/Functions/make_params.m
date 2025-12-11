@@ -148,6 +148,7 @@ P.mock.screen             = false;
 % P.mock.responsebox      = true;
 
 %% -------------------- Profile selection ---------------------------------
+P.runProfile               = runProfile;
 switch runProfile
 
     case 'test'
@@ -176,8 +177,7 @@ switch runProfile
         P.mock.responsebox         = true;                                 % keyboard
 
         P.trigger.mode             = 'TriggerBox';
-        % P.trigger.portAddress      = hex2dec('0378');                    % for biosemi integration, check later
-        P.trigger.pulseMs          = 40;
+        P.trigger.pulseMs          = 20;
         P.trigger.comPort          = 'COM6';                               % need to set per machine
         P.trigger.serial.baudBP    = 2000000;
         P.trigger.serial.baudBS    = 115200;

@@ -52,14 +52,10 @@ addpath(fullfile(currentFolder, 'Functions'));
 % send_trigger_selftest(P);    % Sends pulses 10, 20, 40, 80 (visible in Recorder)
 %
 %% -------------------------------------------------------------------------
-%  Run mic test code and automatic threshold detection
-% -------------------------------------------------------------------------
-% threshold = test_mic_response();
-%% -------------------------------------------------------------------------
 %  Run Main Experiment Script
 % -------------------------------------------------------------------------
 % Replace the script name below with the correct task version as needed.
-Run_Sternberg_WM_Task_AudResp_With_Control(threshold);
+Run_Sternberg_WM_Task_AudResp_With_Control();
 
 %% End of Script (Alavie/Sergio)
 % =========================================================================
