@@ -1,0 +1,7 @@
+file_version,subject,condition,session,task_start_time,block,trial,phase,event_name,event_code,wall_clock,t_rel_sec,duration_to_next,rt,value_shown,entered_value,correct,key_name,device,note,json,screen_index,ifi,refresh_hz,pd_used
+Sergio_G01_CNS-LLF5HT7Y0,test,OFFmed_OFFstim,20251211_122735,2025-12-11 12:27:41.870912,1,NaN,,BLOCK_START,10,2025-12-11 12:28:12.462208,30.591754,0.052819,,,,,,keyboard,,{},2,0.008333,120.000000,1
+Sergio_G01_CNS-LLF5HT7Y0,test,OFFmed_OFFstim,20251211_122735,2025-12-11 12:27:41.870912,1,0,reading,START_PAGE_ON,4,2025-12-11 12:28:12.525842,30.644574,0.039123,,,,,,keyboard,,"{""pd_used"":0}",2,0.008333,120.000000,1
+Sergio_G01_CNS-LLF5HT7Y0,test,OFFmed_OFFstim,20251211_122735,2025-12-11 12:27:41.870912,1,0,reading,START_PAGE_ON,4,2025-12-11 12:28:12.525842,30.644574,1.184887,,,,,,keyboard,,"{""pd_used"":0}",2,0.008333,120.000000,1
+Sergio_G01_CNS-LLF5HT7Y0,test,OFFmed_OFFstim,20251211_122735,2025-12-11 12:27:41.870912,1,0,reading,START_PAGE_ON,4,2025-12-11 12:28:12.525842,30.644574,1.525096,,,,,,keyboard,,"{""pd_used"":0}",2,0.008333,120.000000,1
+Sergio_G01_CNS-LLF5HT7Y0,test,OFFmed_OFFstim,20251211_122735,2025-12-11 12:27:41.870912,1,0,reading,CONTROL_START,23,2025-12-11 12:28:14.039877,32.169669,0.041895,,,,,,keyboard,,{},2,0.008333,120.000000,1
+Sergio_G01_CNS-LLF5HT7Y0,test,OFFmed_OFFstim,20251211_122735,2025-12-11 12:27:41.870912,1,0,reading,READ_DIGIT1_ON,201,2025-12-11 12:28:14.086043,32.211565,NaN,,0,,,,keyboard,digit#1 shown,"{""value"":0,""note"":""digit#1 shown"",""pd_used"":0}",2,0.008333,120.000000,1

@@ -132,7 +132,7 @@ P.screen.strictFullscreen = true;                                          % err
 
 %% -------------------- Trigger / HW integration --------------------------
 P.trigger.mode            = 'TriggerBox';                                  % 'TriggerBox' | 'Parallel' | 'NI' | 'None'
-P.trigger.pulseMs         = 5;                                             % 2–10 ms is ok but for now I chose 5ms (check later if needed) 
+P.trigger.pulseMs         = 40;                                             % 2–10 ms is ok but for now I chose 5ms (check later if needed) 
 
 % Eye tracker (check later if needed) 
 P.eyelink.enable          = false;
@@ -148,7 +148,7 @@ P.mock.screen             = false;
 % P.mock.responsebox      = true;
 
 %% -------------------- Profile selection ---------------------------------
-P.runProfile               = runProfile;
+% P.runProfile               = runProfile;
 switch runProfile
 
     case 'test'
@@ -177,7 +177,7 @@ switch runProfile
         P.mock.responsebox         = true;                                 % keyboard
 
         P.trigger.mode             = 'TriggerBox';
-        P.trigger.pulseMs          = 20;
+        P.trigger.pulseMs          = 40;
         P.trigger.comPort          = 'COM6';                               % need to set per machine
         P.trigger.serial.baudBP    = 2000000;
         P.trigger.serial.baudBS    = 115200;
