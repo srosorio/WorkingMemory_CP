@@ -47,7 +47,7 @@ try
     %% --------------------------------------------------------------------
     % 1) Init: params, event codes, logger, triggeGUIr
     %% --------------------------------------------------------------------
-    P = make_params('test','OFFmed_OFFstim','S01');                         % can change subject/session here (also in the UI)
+    P = make_params('eeg','OFFmed_OFFstim','S01');                         % can change subject/session here (also in the UI)
     C = make_event_codes();
     L = event_logger('init', P, C);
     

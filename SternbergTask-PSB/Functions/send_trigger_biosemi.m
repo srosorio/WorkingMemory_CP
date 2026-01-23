@@ -31,7 +31,7 @@ if ~ismember(P.runProfile, 'test')
         % =================================================================
         case 'init'
             % =================================================================
-            port = 'COM6'; %RP.trigger.comPort;                  % e.g., 'COM3' or '/dev/ttyUSB1'
+            port = P.trigger.comPort;                  % e.g., 'COM3' or '/dev/ttyUSB1'
             if isfield(P,'trigger') && isfield(P.trigger,'serial') && isfield(P.trigger.serial,'baudBS')
                 baud = P.trigger.serial.baudBS;
             else

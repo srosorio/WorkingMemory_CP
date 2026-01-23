@@ -54,8 +54,8 @@ C.DIGITCOUNT_END    = 24;   %
 % -------------------------------------------------------------------------
 C.DIGIT_READING_ON_IDX   = [201 202 203 204 205 206 207 208 209 210];  % 10-digit ON
 C.DIGIT_READING_OFF_IDX  = [211 212 213 214 215 216 217 218 219 220];  % 10-digit OFF
-C.POSTREAD_FIX_ON_IDX  = [231 232 233 234 235 236 237 238 239 240];
-C.POSTREAD_FIX_OFF_IDX = [241 242 243 244 245 246 247 248 249 250];
+C.POSTREAD_FIX_ON_IDX    = [231 232 233 234 235 236 237 238 239 240];
+C.POSTREAD_FIX_OFF_IDX   = [241 242 243 244 245 246 247 248 249 250];
 % C.READING_FIX_ON         = 221;  % fixation ON after each digit if needed
 % C.READING_FIX_OFF        = 222;  % fixation OFF after each digit
 
@@ -64,7 +64,6 @@ C.POSTREAD_FIX_OFF_IDX = [241 242 243 244 245 246 247 248 249 250];
 % -------------------------------------------------------------------------
 C.FIX1_ON           = 30;   % baseline fixation ON
 C.FIX1_OFF          = 31;   % baseline fixation OFF
-
 
 %% ------------------------------------------------------------------------
 %  DIGITS (GENERIC + PER-DIGIT)
@@ -102,7 +101,6 @@ C.DISTRACTOR_OFF    = 52;   % distractor cleared
 % -------------------------------------------------------------------------
 C.FIX2_ON           = 60;
 C.FIX2_OFF          = 61;
-
 
 %% ------------------------------------------------------------------------
 %  PROBE / RECALL PHASE

@@ -178,7 +178,7 @@ switch runProfile
 
         P.trigger.mode             = 'TriggerBox';
         P.trigger.pulseMs          = 40;
-        P.trigger.comPort          = 'COM6';                               % need to set per machine
+        P.trigger.comPort          = 'COM7';                               % need to set per machine
         P.trigger.serial.baudBP    = 2000000;
         P.trigger.serial.baudBS    = 115200;
         P.trigger.idleLevel        = uint8(0);
