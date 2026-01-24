@@ -7,10 +7,11 @@ from pathlib import Path
 # --------------------------
 # --- Configuration ---
 # --------------------------
-participant_id = "S01"
+participant_id = "K03"
+runProfile     = "eeg"
 
 audio_folder = Path(
-    f"C:/Users/saosorio/Projects/WorkingMemory_CP/SternbergTask-PSB/output/test/{participant_id}/OFFmed_OFFstim/AudioFiles"
+    f"C:/Users/saosorio/Projects/WorkingMemory_CP/SternbergTask-PSB/output/{runProfile}/{participant_id}/OFFmed_OFFstim/AudioFiles"
 )
 
 block = "all"  # optional filter by block number
