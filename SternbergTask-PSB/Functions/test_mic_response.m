@@ -17,7 +17,7 @@ try
     % --- Open PTB screen ---
     Screen('Preference', 'VisualDebugLevel', 0);
     Screen('Preference','SkipSyncTests', 1);
-    [win, rect] = Screen('OpenWindow', max(Screen('Screens')), 0); % black background
+    [win, rect] = Screen('OpenWindow', P.screen.whichScreen, 0); % black background
     
     % Set text size and font to match rest of experiment
     Screen('TextSize', win, P.screen.textSize);

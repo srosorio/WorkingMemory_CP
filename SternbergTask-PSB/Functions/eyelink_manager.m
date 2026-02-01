@@ -76,7 +76,7 @@ switch mode
                     k = lower(k);
 
                     if strcmp(k, E.recalKey)
-                        EyelinkDoTrackerSetup(el);
+                        EyelinkDoTrackerSetup(E.el);
                         E.didCal = true;
                         break;
                     elseif strcmp(k, E.continueKey)
@@ -121,8 +121,7 @@ switch mode
         Eyelink('CloseFile');
 
         % save edf file
-        edfFullPath = fullfile(P.saveDir, P.edfFile);
-        % Eyelink('ReceiveFile', P.edfFile, edfFullPath, 1);
+        edfFullPath = P.saveDir;
         status = Eyelink('ReceiveFile', P.edfFile, edfFullPath, 1);
         fprintf('ReceiveFile status = %d\n', status);
 

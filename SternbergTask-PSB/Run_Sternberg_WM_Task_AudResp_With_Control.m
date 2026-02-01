@@ -96,8 +96,8 @@ try
         L.block = b;
         
         % do eyelink calibration only at block 1 for now
-        if b==1
-            eyelink_manager('calibrate', P, S.win, E)
+        if b==1 && ismember(P.runProfile,{'eyetracker','both'})
+            E = eyelink_manager('calibrate', P, S.win, E);
         end
 
         % ----- block start -----
@@ -113,7 +113,7 @@ try
         L.trial       = 0;   % warm-up digits get "trial 0"
         entered       = "";                         % what subject entered so far
         % visibleSlots  = 1;                          % how many recall "places" are visible
-        tProbeStart   = GetSecs();
+          tProbeStart   = GetSecs();
         tDeadline     = tProbeStart + P.probe_max_total;
 
         Text_to_show_at_the_start = ['PART 1: Read aloud', '\n\n', 'Press any key to start'];
@@ -521,7 +521,9 @@ try
     event_logger('add', L, 'SESSION_END', C.SESSION_END, GetSecs(), 0, struct());
     event_logger('close', L);
     send_trigger_biosemi('close', P);
-    eyelink_manager('close', P, S.win)
+    if ismember(P.runProfile,{'eyetracker','both'})
+        eyelink_manager('end', P, S.win, E);
+    end
 
     fprintf('[OK] Step 5 complete. Check CSV for *_ON/OFF with stable visuals.\n');
 
@@ -530,6 +532,10 @@ catch ME
     try, ShowCursor; Priority(0); sca; end
     try, event_logger('close', L); end
     try, send_trigger_biosemi('close', P); end
+    try, Eyelink('StopRecording'); end
+    try, Eyelink('CloseFile'); end
+    try, Eyelink('Shutdown'); end
+    try, Screen('CloseAll'); end
     rethrow(ME);
 end
 end
