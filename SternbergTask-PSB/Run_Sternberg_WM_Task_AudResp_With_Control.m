@@ -78,6 +78,13 @@ try
     % 2.1) Gec Microphone threshold
     %% --------------------------------------------------------------------
     P.audio.threshold = threshold;
+    
+    %% --------------------------------------------------------------------
+    % 3) Initialize eyelink (if needed)
+    %% --------------------------------------------------------------------
+    if ismember(P.runProfile, {'eyetracker','both'})
+        E = eyelink_manager('init', P, S.win);
+    end
 
     %% --------------------------------------------------------------------
     % 4) MAIN LOOP: blocks × trials
@@ -87,6 +94,11 @@ try
 
     for b = 1:nBlocks
         L.block = b;
+        
+        % do eyelink calibration only at block 1 for now
+        if b==1
+            eyelink_manager('calibrate', P, S.win, E)
+        end
 
         % ----- block start -----
         event_logger('add', L, 'BLOCK_START', C.BLOCK_START, GetSecs(), 0, struct());
@@ -100,7 +112,7 @@ try
         L.phase       = 'reading';
         L.trial       = 0;   % warm-up digits get "trial 0"
         entered       = "";                         % what subject entered so far
-        visibleSlots  = 1;                          % how many recall "places" are visible
+        % visibleSlots  = 1;                          % how many recall "places" are visible
         tProbeStart   = GetSecs();
         tDeadline     = tProbeStart + P.probe_max_total;
 
@@ -505,9 +517,11 @@ try
         Priority(0);
         sca;
     end
+
     event_logger('add', L, 'SESSION_END', C.SESSION_END, GetSecs(), 0, struct());
     event_logger('close', L);
     send_trigger_biosemi('close', P);
+    eyelink_manager('close', P, S.win)
 
     fprintf('[OK] Step 5 complete. Check CSV for *_ON/OFF with stable visuals.\n');
 

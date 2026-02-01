@@ -24,7 +24,7 @@ if nargin < 4 || isempty(pulseMs)
 end
 
 % In 'test' runProfile we just print and do nothing.
-if ~ismember(P.runProfile, 'test')
+if  ~ismember(P.runProfile, {'test', 'eyetracker'}) 
 
     switch lower(mode)
 

@@ -56,8 +56,6 @@ C.DIGIT_READING_ON_IDX   = [201 202 203 204 205 206 207 208 209 210];  % 10-digi
 C.DIGIT_READING_OFF_IDX  = [211 212 213 214 215 216 217 218 219 220];  % 10-digit OFF
 C.POSTREAD_FIX_ON_IDX    = [231 232 233 234 235 236 237 238 239 240];
 C.POSTREAD_FIX_OFF_IDX   = [241 242 243 244 245 246 247 248 249 250];
-% C.READING_FIX_ON         = 221;  % fixation ON after each digit if needed
-% C.READING_FIX_OFF        = 222;  % fixation OFF after each digit
 
 %% ------------------------------------------------------------------------
 %  FIXATION BEFORE DIGITS
@@ -82,8 +80,6 @@ C.DIGIT_OFF_IDX     = [146 147 148 149 150];  % digit#1..#5 OFF
 %  POST-DIGIT FIXATION (PER DIGIT)
 %  shown after each digit to avoid flicker / hold attention
 % -------------------------------------------------------------------------
-% C.POSTDIG_FIX_ON  = 42;   % older generic version, not used now
-% C.POSTDIG_FIX_OFF = 43;
 
 C.POSTDIG_FIX_ON_IDX    = [151 152 153 154 155];  % after digit#k ON
 C.POSTDIG_FIX_OFF_IDX   = [156 157 158 159 160];  % after digit#k OFF
