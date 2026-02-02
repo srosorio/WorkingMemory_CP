@@ -55,7 +55,7 @@ try
     threshold = test_mic_response(P);
 
     % triggerbox init (start of session)
-    send_trigger_biosemi('init', P);
+    send_trigger_unified('init', P);
 
     % initalize PsychPortAudio
     pahandle = initialize_ptb_sound(P.audio.fs, P.audio.nchannels, P.audio.maxsecs);
@@ -103,7 +103,7 @@ try
         % ----- block start -----
         event_logger('add', L, 'BLOCK_START', C.BLOCK_START, GetSecs(), 0, struct());
         if ~P.mock.triggerbox
-            send_trigger_biosemi('send', P, C.BLOCK_START, P.trigger.pulseMs);
+            send_trigger_unified('send', P, C.BLOCK_START, P.trigger.pulseMs);
         end
 
         % =========================================================
@@ -127,12 +127,12 @@ try
 
         % mark keypress
         if ~P.mock.triggerbox
-            send_trigger_biosemi('send', P, C.START_KEYPRESS, P.trigger.pulseMs);
+            send_trigger_unified('send', P, C.START_KEYPRESS, P.trigger.pulseMs);
         end
 
         % quick sanity pulse (if trigger is connected)
         try
-            send_trigger_biosemi('send', P, C.SANITY_PULSE, 10);
+            send_trigger_unified('send', P, C.SANITY_PULSE, 10);
         catch ME
             fprintf('[Trigger sanity pulse failed] %s\n', ME.message);
             error
@@ -140,7 +140,7 @@ try
 
         event_logger('add', L, 'CONTROL_START',  C.DIGITCOUNT_START,  GetSecs(), 0, struct());
         if ~P.mock.triggerbox
-            send_trigger_biosemi('send', P, C.DIGITCOUNT_START, P.trigger.pulseMs);
+            send_trigger_unified('send', P, C.DIGITCOUNT_START, P.trigger.pulseMs);
         end
 
         % now start with the digits
@@ -171,7 +171,7 @@ try
                 'rt', R.tPress - tProbeStart, 'note', sprintf('probe_digit#%d', k)));
 
             % 3) trigger for this digit
-            send_trigger_biosemi('send', P, C.COUNT_READ_ALOUD(k), P.trigger.pulseMs);
+            send_trigger_unified('send', P, C.COUNT_READ_ALOUD(k), P.trigger.pulseMs);
 
             % 4) after entry: clear "?" or update display
             if strcmpi(P.probe.displayStyle, 'question')
@@ -205,7 +205,7 @@ try
 
         event_logger('add', L, 'CONTROL_END',  C.DIGITCOUNT_END,  GetSecs(), 0, struct());
         if ~P.mock.triggerbox
-            send_trigger_biosemi('send', P, C.DIGITCOUNT_END, P.trigger.pulseMs);
+            send_trigger_unified('send', P, C.DIGITCOUNT_END, P.trigger.pulseMs);
         end
 
         %% --------------------------------------------------------------------
@@ -222,7 +222,7 @@ try
 
         % mark keypress
         if ~P.mock.triggerbox
-            send_trigger_biosemi('send', P, C.START_KEYPRESS, P.trigger.pulseMs);
+            send_trigger_unified('send', P, C.START_KEYPRESS, P.trigger.pulseMs);
         end
 
         % session start in logger
@@ -230,7 +230,7 @@ try
 
         % quick sanity pulse (if trigger is connected)
         try
-            send_trigger_biosemi('send', P, C.SANITY_PULSE, 10);
+            send_trigger_unified('send', P, C.SANITY_PULSE, 10);
         catch ME
             fprintf('[Trigger sanity pulse failed] %s\n', ME.message);
             error
@@ -243,7 +243,7 @@ try
             event_logger('add', L, 'TRIAL_CHANGE', C.TRIAL_CHANGE, GetSecs(), 0, struct('note','trial transition'));
             event_logger('add', L, 'TRIAL_START',  C.TRIAL_START,  GetSecs(), 0, struct());
             if ~P.mock.triggerbox
-                send_trigger_biosemi('send', P, C.TRIAL_START, P.trigger.pulseMs);
+                send_trigger_unified('send', P, C.TRIAL_START, P.trigger.pulseMs);
             end
 
             %% =========================================================
@@ -330,7 +330,7 @@ try
 
                 % also send trigger for distractor answer
                 if ~P.mock.triggerbox
-                    send_trigger_biosemi('send', P, C.DISTRACTOR_ANS, P.trigger.pulseMs);
+                    send_trigger_unified('send', P, C.DISTRACTOR_ANS, P.trigger.pulseMs);
                 end
 
                 % correctness flags
@@ -417,7 +417,7 @@ try
                     'rt', R.tPress - tProbeStart, 'note', sprintf('probe_digit#%d', k)));
 
                 % 3) trigger for this digit
-                send_trigger_biosemi('send', P, C.DIGIT_RECALL_INPUT(k), P.trigger.pulseMs);
+                send_trigger_unified('send', P, C.DIGIT_RECALL_INPUT(k), P.trigger.pulseMs);
 
                 % 4) after entry: clear "?" or update display
                 if strcmpi(P.probe.displayStyle, 'question')
@@ -495,7 +495,7 @@ try
             %% =========================================================
             event_logger('add', L, 'TRIAL_END', C.TRIAL_END, GetSecs(), 0, struct());
             if ~P.mock.triggerbox
-                send_trigger_biosemi('send', P, C.TRIAL_END, P.trigger.pulseMs);
+                send_trigger_unified('send', P, C.TRIAL_END, P.trigger.pulseMs);
             end
 
         end % trial loop
@@ -505,7 +505,7 @@ try
         %% -------------------------------------------------------------
         event_logger('add', L, 'BLOCK_END', C.BLOCK_END, GetSecs(), 0, struct());
         if ~P.mock.triggerbox
-            send_trigger_biosemi('send', P, C.BLOCK_END,  P.trigger.pulseMs);
+            send_trigger_unified('send', P, C.BLOCK_END,  P.trigger.pulseMs);
         end
     end % block loop
 
@@ -520,7 +520,7 @@ try
 
     event_logger('add', L, 'SESSION_END', C.SESSION_END, GetSecs(), 0, struct());
     event_logger('close', L);
-    send_trigger_biosemi('close', P);
+    send_trigger_unified('close', P);
     if ismember(P.runProfile,{'eyetracker','both'})
         eyelink_manager('end', P, S.win, E);
     end
@@ -531,7 +531,7 @@ catch ME
     % Error handling
     try, ShowCursor; Priority(0); sca; end
     try, event_logger('close', L); end
-    try, send_trigger_biosemi('close', P); end
+    try, send_trigger_unified('close', P); end
     try, Eyelink('StopRecording'); end
     try, Eyelink('CloseFile'); end
     try, Eyelink('Shutdown'); end

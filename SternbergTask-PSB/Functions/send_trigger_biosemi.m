@@ -24,7 +24,7 @@ if nargin < 4 || isempty(pulseMs)
 end
 
 % In 'test' runProfile we just print and do nothing.
-if  ~ismember(P.runProfile, {'test', 'eyetracker'}) 
+if  ~ismember(P.runProfile, {'test', 'eyetracker'})
 
     switch lower(mode)
 
@@ -97,7 +97,7 @@ if  ~ismember(P.runProfile, {'test', 'eyetracker'})
 
             % send same trigger to eyelink
             if ismember(P.runProfile,'both')
-                Eyelink('Message', '%d', code)
+                Eyelink('Message', '%d', code);
             end
             % =================================================================
         case 'set'
@@ -114,10 +114,10 @@ if  ~ismember(P.runProfile, {'test', 'eyetracker'})
 
             fwrite(TB.fh, uint8(bitand(code,255)));
             TB.lastWriteT = GetSecs();
-            
+
             % send same trigger to eyelink
             if ismember(P.runProfile,'both')
-                Eyelink('Message', '%d', code)
+                Eyelink('Message', '%d', code);
             end
             % =================================================================
         case 'close'
@@ -137,15 +137,19 @@ if  ~ismember(P.runProfile, {'test', 'eyetracker'})
         otherwise
             error('send_trigger: unknown mode "%s"', mode);
     end
-
-elseif ismember(P.runProfile, {'eyetracker'}) 
+    % if running in eyetracker mode
+elseif ismember(P.runProfile, {'eyetracker'})
 
     switch lower(mode)
         % =================================================================
         case 'send'
-        % =================================================================
-            Eyelink('Message', '%d', code)
+            % =================================================================
+            Eyelink('Message', '%d', code);
     end
+    % if running in test mode
+else
+    % test profile: don't touch hardware
+    fprintf('[TEST - no Trigger] .\n');
 end
 
 end

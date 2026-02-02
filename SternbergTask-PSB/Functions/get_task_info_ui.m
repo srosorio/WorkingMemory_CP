@@ -92,7 +92,7 @@ for i = 1:n
             'BackgroundColor','white');
     elseif strcmpi(field,'eeg_system')
         validProfiles = {'none','biosemi','brainproducts'};
-        valIdx = 1;
+        if isempty(valIdx), valIdx = 1; end
         handles.(safeFieldName) = uicontrol(fig,'Style','popupmenu',...
             'String',validProfiles,...
             'Value',valIdx,...
@@ -132,6 +132,10 @@ uiwait(fig);
 
             % Extract value (handle dropdown vs edit)
             if strcmpi(fld,'runProfile')
+                validProfiles = handles.(safeFld).String;
+                idx = handles.(safeFld).Value;
+                val = string(validProfiles{idx});
+            elseif strcmpi(fld,'eeg_system')
                 validProfiles = handles.(safeFld).String;
                 idx = handles.(safeFld).Value;
                 val = string(validProfiles{idx});
