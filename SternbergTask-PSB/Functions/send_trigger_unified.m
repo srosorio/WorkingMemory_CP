@@ -173,7 +173,7 @@ switch SYSTEM
                 % =================================================================
                 case 'send'
                     % =================================================================
-                    Eyelink('Message', '%d', code)
+                    Eyelink('Message', '%d', code);
             end
             % if running in test mode
         else
@@ -262,7 +262,7 @@ switch SYSTEM
 
                     % send same trigger to eyelink
                     if ismember(P.runProfile,'both')
-                        Eyelink('Message', '%d', code)
+                        Eyelink('Message', '%d', code);
                     end
                     % =================================================================
                 case 'set'
@@ -282,7 +282,7 @@ switch SYSTEM
 
                     % send same trigger to eyelink
                     if ismember(P.runProfile,'both')
-                        Eyelink('Message', '%d', code)
+                        Eyelink('Message', '%d', code);
                     end
                     % =================================================================
                 case 'close'

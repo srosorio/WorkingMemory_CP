@@ -1,2 +1,0 @@
-file_version,subject,condition,session,task_start_time,block,trial,phase,event_name,event_code,wall_clock,t_rel_sec,duration_to_next,rt,value_shown,entered_value,correct,key_name,device,note,json,screen_index,ifi,refresh_hz,pd_used
-Sergio_G01_CNS-LLF5HT7Y0,test,OFFmed_OFFstim,20251211_110944,2025-12-11 11:09:50.435714,1,NaN,,BLOCK_START,10,2025-12-11 11:10:10.641690,20.203125,NaN,,,,,,keyboard,,{},2,0.008333,120.000000,1
