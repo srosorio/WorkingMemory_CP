@@ -95,6 +95,8 @@ if  ~ismember(P.runProfile, {'test', 'eyetracker'})
 
             TB.lastWriteT = GetSecs();
 
+            % send same trigger to eyelink
+            Eyelink('Message', '%d', code)
             % =================================================================
         case 'set'
             % =================================================================
@@ -110,7 +112,9 @@ if  ~ismember(P.runProfile, {'test', 'eyetracker'})
 
             fwrite(TB.fh, uint8(bitand(code,255)));
             TB.lastWriteT = GetSecs();
-
+            
+            % send same trigger to eyelink
+            Eyelink('Message', '%d', code)
             % =================================================================
         case 'close'
             % =================================================================
@@ -130,6 +134,14 @@ if  ~ismember(P.runProfile, {'test', 'eyetracker'})
             error('send_trigger: unknown mode "%s"', mode);
     end
 
+elseif ismember(P.runProfile, {'eyetracker'}) 
+
+    switch lower(mode)
+        % =================================================================
+        case 'send'
+        % =================================================================
+            Eyelink('Message', '%d', code)
+    end
 end
 
 end
