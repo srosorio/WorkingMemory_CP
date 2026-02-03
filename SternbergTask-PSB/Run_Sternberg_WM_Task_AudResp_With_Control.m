@@ -138,9 +138,9 @@ try
             error
         end
 
-        event_logger('add', L, 'CONTROL_START',  C.DIGITCOUNT_START,  GetSecs(), 0, struct());
+        event_logger('add', L, 'READING_START',  C.DIGITREAD_START,  GetSecs(), 0, struct());
         if ~P.mock.triggerbox
-            send_trigger_unified('send', P, C.DIGITCOUNT_START, P.trigger.pulseMs);
+            send_trigger_unified('send', P, C.DIGITREAD_START, P.trigger.pulseMs);
         end
 
         % now start with the digits
@@ -203,9 +203,9 @@ try
             end
         end
 
-        event_logger('add', L, 'CONTROL_END',  C.DIGITCOUNT_END,  GetSecs(), 0, struct());
+        event_logger('add', L, 'READING_END',  C.DIGITREAD_END,  GetSecs(), 0, struct());
         if ~P.mock.triggerbox
-            send_trigger_unified('send', P, C.DIGITCOUNT_END, P.trigger.pulseMs);
+            send_trigger_unified('send', P, C.DIGITREAD_END, P.trigger.pulseMs);
         end
 
         %% --------------------------------------------------------------------
