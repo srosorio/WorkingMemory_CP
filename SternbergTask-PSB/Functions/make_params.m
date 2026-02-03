@@ -48,7 +48,7 @@ P.condition   = condition;                                                 % e.g
 %% -------------------- Blocks / Trials -----------------------------------
 P.nBlocks     = 2;                                                         % real blocks
 P.nTrials     = 10;                                                        % trials per block
-P.numCounts   = 10;
+P.numCounts   = 15;
 P.numDigits   = 5;                                                         % digits per trial
 
 %% -------------------- Timing (sec) --------------------------------------
@@ -91,7 +91,7 @@ P.start.message          = 'Press any key to start';
 
 %% -------------------- Photodiode ----------------------------------------
 P.photodiode.enabled     = true;                                           % harmless in test mode
-P.photodiode.rectPix     = [0 0 65 65];                                    % top-left patch (open_ptb_screen will use this)
+P.photodiode.rectPix     = [0 0 100 100];                                    % top-left patch (open_ptb_screen will use this)
 P.photodiode.flipDur     = 0.016;                                          % ~1 frame @ 60Hz
 P.photodiode.mode        = 'steady';                                       % can be 'flash'
 P.photodiode.scope       = 'digits';                                       % or 'custom' with names below
