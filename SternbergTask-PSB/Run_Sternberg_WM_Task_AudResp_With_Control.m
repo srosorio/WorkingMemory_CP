@@ -144,7 +144,7 @@ try
         end
 
         % now start with the digits
-        for k = 1:P.probe_max_count
+        for k = 1:P.probe_max_read
 
             d = P.digitPool(randi(numel(P.digitPool)));
             % --- DIGIT k ON ---

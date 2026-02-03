@@ -79,7 +79,7 @@ P.fix_after_dist_range   = [3, 3.5];
 % Probe / recall
 P.probe_max_total        = 100.0;                                          % was 15.0
 P.probe_max_digits       = 5;
-P.probe_max_count        = 10;
+P.probe_max_read         = 15;
 
 %% -------------------- Randomization -------------------------------------
 P.digitPool              = 0:9;                                            % choose from 0–9
