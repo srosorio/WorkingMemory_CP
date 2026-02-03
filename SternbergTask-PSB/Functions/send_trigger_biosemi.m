@@ -96,7 +96,7 @@ if  ~ismember(P.runProfile, {'test', 'eyetracker'})
             TB.lastWriteT = GetSecs();
 
             % send same trigger to eyelink
-            if ismember(P.runProfile,'both')
+            if ismember(P.runProfile,'fullSetup')
                 Eyelink('Message', '%d', code);
             end
             % =================================================================
@@ -116,7 +116,7 @@ if  ~ismember(P.runProfile, {'test', 'eyetracker'})
             TB.lastWriteT = GetSecs();
 
             % send same trigger to eyelink
-            if ismember(P.runProfile,'both')
+            if ismember(P.runProfile,'fullSetup')
                 Eyelink('Message', '%d', code);
             end
             % =================================================================

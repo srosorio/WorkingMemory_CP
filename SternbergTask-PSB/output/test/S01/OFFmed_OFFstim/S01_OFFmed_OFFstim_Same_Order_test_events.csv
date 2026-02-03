@@ -1,3 +1,0 @@
-file_version,subject,condition,session,task_start_time,block,trial,phase,event_name,event_code,wall_clock,t_rel_sec,duration_to_next,rt,value_shown,entered_value,correct,key_name,device,note,json,screen_index,ifi,refresh_hz,pd_used
-Sergio_G01_CNS-LLF5HT7Y0,S01,OFFmed_OFFstim,20260202_192414,2026-02-02 19:24:22.907791,NaN,NaN,,MIC_NOISEFLOOR,6,2026-02-02 19:24:24.233299,1.325175,4.098699,,,,,,keyboard,,{},1,NaN,NaN,1
-Sergio_G01_CNS-LLF5HT7Y0,S01,OFFmed_OFFstim,20260202_192414,2026-02-02 19:24:22.907791,NaN,NaN,,MIC_REC_SPEECH,7,2026-02-02 19:24:28.332061,5.423874,6.617010,,,,,,keyboard,,{},1,NaN,NaN,1

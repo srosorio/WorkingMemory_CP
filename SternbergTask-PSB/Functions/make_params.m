@@ -35,18 +35,18 @@ if nargin < 2 || isempty(condition),  condition  = 'OFFmed_OFFstim'; end
 if nargin < 3 || isempty(subjectID),  subjectID  = 'SUBJ001'; end
 
 runProfile    = lower(runProfile);
-validProfiles = {'test','eeg','eyetracker','both'};
+validProfiles = {'test','eeg','eyetracker','fullSetup'};
 if ~ismember(runProfile, validProfiles)
-    error('make_params: Unknown runProfile "%s". Use: test | eeg | eyetracker | both.', runProfile);
+    error('make_params: Unknown runProfile "%s". Use: test | eeg | eyetracker | fullSetup.', runProfile);
 end
 
 %% -------------------- Session metadata ----------------------------------
 P.subjectID   = subjectID;
 P.sessionID   = string(datetime('now','Format','yyyyMMdd_HHmmss'));        % e.g. 20251104_101233
 P.condition   = condition;                                                 % e.g. OFFmed_OFFstim
-
+P.block       = 'TestBlock';
 %% -------------------- Blocks / Trials -----------------------------------
-P.nBlocks     = 2;                                                         % real blocks
+P.nBlocks     = 1;                                                         % real blocks
 P.nTrials     = 10;                                                        % trials per block
 P.numCounts   = 15;
 P.numDigits   = 5;                                                         % digits per trial
@@ -201,7 +201,7 @@ switch runProfile
         P.eyelink.enable           = true;
         P.photodiode.enabled       = true;
 
-    case 'both'
+    case 'fullSetup'
         % EEG + EyeLink together
         P.screen.fullscreen        = true;
         P.screen.skipSync          = 0;
@@ -293,10 +293,11 @@ P.audio.saveDir = fullfile(pwd, 'output', path_save_CSV, 'AudioFiles');
 if ~exist(P.saveDir,'dir'), mkdir(P.saveDir); end
 if ~exist(P.audio.saveDir,'dir'), mkdir(P.audio.saveDir); end
 
-P.csvFile = sprintf('%s_%s_%s_%s_events.csv', ...
+P.csvFile = sprintf('%s_%s_%s_%s_%s_events.csv', ...
     P.subjectID, ...
+    P.block, ...
     P.condition, ...
-    strrep(P.Text.taskCondition, " ", "_"), ...
+    strrep(P.Text.taskCondition, " ", ""), ...
     P.runProfile);
 
 P.edfFile = sprintf('%s_eye.edf', ...
