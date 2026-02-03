@@ -36,7 +36,7 @@ function Run_Sternberg_WM_Task_AudResp_With_Control()
 
 try
     %% --------------------------------------------------------------------
-    % 0) RNG safe init
+    % RNG safe init
     %% --------------------------------------------------------------------
     try
         rng('shuffle');
@@ -62,6 +62,7 @@ try
 
     %  Run mic test code and automatic threshold detection
     threshold = test_mic_response(P);
+    
     % initalize PsychPortAudio
     pahandle = initialize_ptb_sound(P.audio.fs, P.audio.nchannels, P.audio.maxsecs);
     
@@ -79,26 +80,32 @@ try
     assert(numel(C.DIGIT_RECALL_INPUT)  >= P.probe_max_digits, 'Codes: DIGIT_RECALL_INPUT too short');
 
     %% --------------------------------------------------------------------
-    % 2) Open PTB screen
+    % Open PTB screen
     %% --------------------------------------------------------------------
     S = open_ptb_screen(P);
     L.ifi        = S.ifi;
     L.refresh_hz = 1 / S.ifi;
 
     %% --------------------------------------------------------------------
-    % 2.1) Gec Microphone threshold
+    % Gec Microphone threshold
     %% --------------------------------------------------------------------
     P.audio.threshold = threshold;
     
     %% --------------------------------------------------------------------
-    % 3) Initialize eyelink (if needed)
+    % Initialize eyelink (if needed)
     %% --------------------------------------------------------------------
-    if ismember(P.runProfile, {'eyetracker','both'})
+    
+    % do eyelink calibration only at block 1 for now
+    if ismember(P.runProfile,{'eyetracker','both'})
         E = eyelink_manager('init', P, S.win);
+        E = eyelink_manager('calibrate', P, S.win, E);
     end
 
+    % session start in logger
+    event_logger('add', L, 'SESSION_START', C.SESSION_START, GetSecs(), 0, struct());
+
     %% --------------------------------------------------------------------
-    % 4) MAIN LOOP: blocks × trials
+    % MAIN LOOP
     %% --------------------------------------------------------------------
     nBlocks = P.nBlocks;
     nTrials = P.nTrials;
@@ -106,28 +113,28 @@ try
     for b = 1:nBlocks
         L.block = b;
         
-        % do eyelink calibration only at block 1 for now
-        if b==1 && ismember(P.runProfile,{'eyetracker','both'})
-            E = eyelink_manager('calibrate', P, S.win, E);
-        end
-
-        % ----- block start -----
+        % ---- log block start all systems -----
         event_logger('add', L, 'BLOCK_START', C.BLOCK_START, GetSecs(), 0, struct());
         if ~P.mock.triggerbox
             send_trigger_unified('send', P, C.BLOCK_START, P.trigger.pulseMs);
+            % send trigger for block start to eyelink for syncrhonization
+            if ismember(P.runProfile,'both')
+                Eyelink('Message', '%d', C.BLOCK_START);
+            end
         end
 
-        % =========================================================
-        % PRE-BLOCK 10-DIGIT WARM-UP
-        % =========================================================
+        % --------------------------------------------------------------------
+        % PRE-BLOCK 15-DIGIT WARM-UP
+        % --------------------------------------------------------------------
         L.phase       = 'reading';
         L.trial       = 0;   % warm-up digits get "trial 0"
         entered       = "";  % what subject entered so far
         tProbeStart   = GetSecs();
         tDeadline     = tProbeStart + P.probe_max_total;
-
+        
+        % set up screen for instructions
         Text_to_show_at_the_start = ['PART 1: Read aloud', '\n\n', 'Press any key to start'];
-
+        
         % Show start page using markEvent (so PD + trigger are aligned)
         [~, L] = markEvent(P, L, S, C.START_PAGE_ON, 'START_PAGE_ON', struct(), ...
             @(w) DrawFormattedText(w, Text_to_show_at_the_start, 'center', 'center', P.screen.textColor));
@@ -147,13 +154,14 @@ try
             fprintf('[Trigger sanity pulse failed] %s\n', ME.message);
             error
         end
-
+        
+        % reading phase has started
         event_logger('add', L, 'READING_START',  C.DIGITREAD_START,  GetSecs(), 0, struct());
         if ~P.mock.triggerbox
             send_trigger_unified('send', P, C.DIGITREAD_START, P.trigger.pulseMs);
         end
-
-        % now start with the digits
+        
+        % loop through digit count for the reading phase
         for k = 1:P.probe_max_read
 
             d = P.digitPool(randi(numel(P.digitPool)));
@@ -162,11 +170,12 @@ try
                 struct('value', d, 'note', sprintf('digit#%d shown',k)), ...
                 @(w) redraw_digit_frame(w, P, S, d));
 
-            % 1) wait for user to enter a single digit (with deadline)
+            % wait for user to enter a single digit (with deadline)
             R = get_single_digit_vocal(tDeadline, P, L, k, pahandle);
             if R.quit
                 error('User pressed ESCAPE during PROBE.');
             end
+
             if ~R.madeResponse
                 % timeout in probe
                 event_logger('add', L, 'PROBE_TIMEOUT', C.PROBE_TIMEOUT, GetSecs(), 0, ...
@@ -174,17 +183,18 @@ try
                 break;
             end
 
-            % 2) log this digit
+            % log this digit
             entered = entered + string(R.digit);
             event_logger('add', L, sprintf('PROBE_COUNT_OK_%d', k), C.PROBE_DIGIT_OK, R.tPress, 0, ...
                 struct('value', sprintf('slot#%d', k), 'entered', R.digit, ...
                 'rt', R.tPress - tProbeStart, 'note', sprintf('probe_digit#%d', k)));
 
-            % 3) trigger for this digit
+            % trigger for this digit
             send_trigger_unified('send', P, C.COUNT_READ_ALOUD(k), P.trigger.pulseMs);
 
-            % 4) after entry: clear "?" or update display
+            % after entry: clear "?" or update display
             if strcmpi(P.probe.displayStyle, 'question')
+
                 % --- DIGIT k OFF -> fixation ---
                 [t_fix_on, L] = markEvent(P, L, S, C.DIGIT_READING_OFF_IDX(k), sprintf('DIGIT_READ%d_OFF', k), ...
                     struct('value', d, 'note', sprintf('digit#%d off',k)), ...
@@ -200,6 +210,7 @@ try
                 else
                     WaitSecs(jitter(P.postDigitFix_last_range));
                 end
+
                 % --- fixation OFF ---
                 [~, L] = markEvent(P, L, S, C.POSTREAD_FIX_OFF_IDX(k), sprintf('POSTREAD_FIX%d_OFF', k), ...
                     struct('note', sprintf('after digit#%d',k)), ...
@@ -207,7 +218,7 @@ try
                 Screen('Flip', S.win);   % PD OFF here
             end
 
-            % 7) stop if total probe time is over
+            % stop if total probe time is over
             if GetSecs() >= tDeadline
                 break;
             end
@@ -219,8 +230,10 @@ try
         end
 
         %% --------------------------------------------------------------------
-        % 3) START PAGE (via markEvent → PD+trigger same frame)
+        % DIGIT MEMORY PHASE
         %% --------------------------------------------------------------------
+        
+        % set up instructions screen
         Text_to_show_at_the_start = ['Part 2: Memory', '\n\n', P.start.message];
 
         % Show start page using markEvent (so PD + trigger are aligned)
@@ -235,9 +248,6 @@ try
             send_trigger_unified('send', P, C.START_KEYPRESS, P.trigger.pulseMs);
         end
 
-        % session start in logger
-        event_logger('add', L, 'SESSION_START', C.SESSION_START, GetSecs(), 0, struct());
-
         % quick sanity pulse (if trigger is connected)
         try
             send_trigger_unified('send', P, C.SANITY_PULSE, 10);
@@ -245,20 +255,19 @@ try
             fprintf('[Trigger sanity pulse failed] %s\n', ME.message);
             error
         end
-
+        
+        % loop through trial count
         for t = 1:nTrials
-            L.trial = t;
-
+            
             % ----- trial start -----
+            L.trial = t;
             event_logger('add', L, 'TRIAL_CHANGE', C.TRIAL_CHANGE, GetSecs(), 0, struct('note','trial transition'));
             event_logger('add', L, 'TRIAL_START',  C.TRIAL_START,  GetSecs(), 0, struct());
             if ~P.mock.triggerbox
                 send_trigger_unified('send', P, C.TRIAL_START, P.trigger.pulseMs);
             end
 
-            %% =========================================================
-            % A) FIXATION (baseline)
-            %% =========================================================
+            % ----- FIXATION (baseline) -----
             L.phase = 'fix1';
             [~, L] = markEvent(P, L, S, C.FIX1_ON, 'FIX1_ON', ...
                 struct(), @(w) redraw_fixation_frame(w, P, S));
@@ -266,9 +275,9 @@ try
             [~, L] = markEvent(P, L, S, C.FIX1_OFF, 'FIX1_OFF', struct(), ...
                 @(w) redraw_blank_frame(w, P));
 
-            %% =========================================================
-            % B) DIGIT PRESENTATION (5 digits or P.numDigits)
-            %% =========================================================
+            %% --------------------------------------------------------------------
+            % DIGIT PRESENTATION 
+            %% --------------------------------------------------------------------
             L.phase = 'digit';
             for k = 1:P.numDigits
                 % choose digit from pool
@@ -303,9 +312,9 @@ try
                     @(w) redraw_blank_frame(w, P));
             end
 
-            %% =========================================================
+            %% --------------------------------------------------------------------
             % C) DISTRACTOR
-            %% =========================================================
+            %% --------------------------------------------------------------------
             L.phase = 'distractor';
             D = generate_distractor(P);   % struct with: a,b,shownSum,trueSum,isCorrect,...
 
@@ -374,23 +383,14 @@ try
             [~, L] = markEvent(P, L, S, C.FIX2_OFF, 'FIX2_OFF', struct(), ...
                 @(w) redraw_blank_frame(w, P));
 
-            %% =========================================================
-            % D) PROBE PHASE (NEW) /-\
-            %     - supports 2 display styles:
-            %           1) 'question' → show "?" each time, remove after entry
-            %           2) line/slot  → old behavior, show entered digits
-            %     - per-digit trigger is kept
-            %     - PD-aligned via markEvent when "?" (or line) is shown
-            %% =========================================================
+            %% --------------------------------------------------------------------
+            % PROBE PHASE (NEW)
+            %% --------------------------------------------------------------------
             L.phase = 'probe';
             entered       = "";                         % what subject entered so far
             visibleSlots  = 1;                          % how many recall "places" are visible
             tProbeStart   = GetSecs();
             tDeadline     = tProbeStart + P.probe_max_total;
-
-            % % --- black screen before recall (PD ON here) ---
-            % [~, L] = markEvent(P, L, S, C.RECALL_BLACK_ON, 'RECALL_BLACK_ON', ...
-            %     struct('note','probe black page'), @(w) redraw_blank_frame(w,P));
 
             % --- first prompt (either "?" or line style) ---
             if strcmpi(P.probe.displayStyle, 'question')
@@ -408,7 +408,7 @@ try
             % --- collect up to P.probe_max_digits digits ---
             for k = 1:P.probe_max_digits
 
-                % 1) wait for user to enter a single digit (with deadline)
+                % wait for user to enter a single digit (with deadline)
                 R = get_single_digit_vocal(tDeadline, P, L, k, pahandle);
                 if R.quit
                     error('User pressed ESCAPE during PROBE.');
@@ -420,16 +420,16 @@ try
                     break;
                 end
 
-                % 2) log this digit
+                % log this digit
                 entered = entered + string(R.digit);
                 event_logger('add', L, sprintf('PROBE_DIGIT_OK_%d', k), C.PROBE_DIGIT_OK, R.tPress, 0, ...
                     struct('value', sprintf('slot#%d', k), 'entered', R.digit, ...
                     'rt', R.tPress - tProbeStart, 'note', sprintf('probe_digit#%d', k)));
 
-                % 3) trigger for this digit
+                % trigger for this digit
                 send_trigger_unified('send', P, C.DIGIT_RECALL_INPUT(k), P.trigger.pulseMs);
 
-                % 4) after entry: clear "?" or update display
+                % after entry: clear "?" or update display
                 if strcmpi(P.probe.displayStyle, 'question')
                     % --- DIGIT k OFF -> fixation ---
                     [t_fix_on, L] = markEvent(P, L, S, C.DIGIT_OFF_IDX(k), sprintf('DIGIT%d_OFF', k), ...
@@ -500,9 +500,9 @@ try
             % (your long commented blocks stay here, unchanged)
             % -----------------------------------------------------------------
 
-            %% =========================================================
-            % E) TRIAL END
-            %% =========================================================
+            %% --------------------------------------------------------------------
+            % TRIAL END
+            %% --------------------------------------------------------------------
             event_logger('add', L, 'TRIAL_END', C.TRIAL_END, GetSecs(), 0, struct());
             if ~P.mock.triggerbox
                 send_trigger_unified('send', P, C.TRIAL_END, P.trigger.pulseMs);
@@ -516,11 +516,15 @@ try
         event_logger('add', L, 'BLOCK_END', C.BLOCK_END, GetSecs(), 0, struct());
         if ~P.mock.triggerbox
             send_trigger_unified('send', P, C.BLOCK_END,  P.trigger.pulseMs);
+            % send trigger for block end to eyelink for syncrhonization
+            if ismember(P.runProfile,'both')
+                Eyelink('Message', '%d', C.BLOCK_END);
+            end            
         end
     end % block loop
 
     %% --------------------------------------------------------------------
-    % 5) CLEAN SHUTDOWN
+    % CLEAN SHUTDOWN
     %% --------------------------------------------------------------------
     if isfield(S,'win') && ~isempty(S.win) && S.win~=0
         ShowCursor(S.win);
@@ -538,7 +542,9 @@ try
     fprintf('[OK] Step 5 complete. Check CSV for *_ON/OFF with stable visuals.\n');
 
 catch ME
+    %% --------------------------------------------------------------------
     % Error handling
+    %% --------------------------------------------------------------------
     try, ShowCursor; Priority(0); sca; end
     try, event_logger('close', L); end
     try, send_trigger_unified('close', P); end
@@ -550,4 +556,4 @@ catch ME
 end
 end
 
-% Alavie
+% Alavie & Sergio

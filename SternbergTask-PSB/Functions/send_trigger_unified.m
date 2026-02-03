@@ -33,32 +33,31 @@ if ismember(P.runProfile, 'test')
     return;
 end
 
-% =========================================================================
-% CHOOSE SYSTEM
-% =========================================================================
-switch lower(P.eeg_system)
-    case {'brainproducts'}
-        SYSTEM = 'BP';
-    case {'biosemi'}
-        SYSTEM = 'BS';
-    otherwise
-        error('Unknown eeg_system: %s (expected BrainProducts or BioSemi)', eeg_system);
-end
+if  ~ismember(P.runProfile, {'test', 'eyetracker'})
+    % =========================================================================
+    % CHOOSE SYSTEM
+    % =========================================================================
+    switch lower(P.eeg_system)
+        case {'brainproducts'}
+            SYSTEM = 'BP';
+        case {'biosemi'}
+            SYSTEM = 'BS';
+        otherwise
+            error('Unknown eeg_system: %s (expected BrainProducts or BioSemi)', eeg_system);
+    end
 
-% =========================================================================
-% BRANCH TO EACH IMPLEMENTATION
-% =========================================================================
+    % =========================================================================
+    % BRANCH TO EACH IMPLEMENTATION
+    % =========================================================================
 
-switch SYSTEM
-    % #########################################################################
-    % ### BRAIN PRODUCTS (TriggerBox / IOPort version)
-    % #########################################################################
-    case 'BP'
+    switch SYSTEM
+        % #########################################################################
+        % ### BRAIN PRODUCTS (TriggerBox / IOPort version)
+        % #########################################################################
+        case 'BP'
 
-        % Make persistent available locally
-        TB = TB_BP;
-
-        if  ~ismember(P.runProfile, {'test', 'eyetracker'})
+            % Make persistent available locally
+            TB = TB_BP;
             switch lower(mode)
 
                 case 'init'
@@ -167,28 +166,14 @@ switch SYSTEM
             end
             TB_BP = TB;   % save state back to persistent
             % if running in eyetracker mode
-        elseif ismember(P.runProfile, {'eyetracker'})
 
-            switch lower(mode)
-                % =================================================================
-                case 'send'
-                    % =================================================================
-                    Eyelink('Message', '%d', code);
-            end
-            % if running in test mode
-        else
-            % test profile: don't touch hardware
-            fprintf('[TEST - no Trigger] .\n');
-        end
-        % #########################################################################
-        % ### BIOSEMI (serial/fwrite version)
-        % #########################################################################
-    case 'BS'
+            % #########################################################################
+            % ### BIOSEMI (serial/fwrite version)
+            % #########################################################################
+        case 'BS'
 
-        % Make persistent available locally
-        TB = TB_BS;
-
-        if  ~ismember(P.runProfile, {'test', 'eyetracker'})
+            % Make persistent available locally
+            TB = TB_BS;
 
             switch lower(mode)
 
@@ -261,7 +246,7 @@ switch SYSTEM
                     TB.lastWriteT = GetSecs();
 
                     % send same trigger to eyelink
-                    if ismember(P.runProfile,'both')
+                    if ismember(P.runProfile,'both') && ~ismember(code,[6 7])
                         Eyelink('Message', '%d', code);
                     end
                     % =================================================================
@@ -303,30 +288,30 @@ switch SYSTEM
                     error('send_trigger: unknown mode "%s"', mode);
             end
             TB_BS = TB;   % save state back to persistent
+    end
 
-            % if running in eyetracker mode
-        elseif ismember(P.runProfile, {'eyetracker'})
+elseif ismember(P.runProfile, {'eyetracker'})
 
-            switch lower(mode)
-                % =================================================================
-                case 'send'
-                    % =================================================================
-                    Eyelink('Message', '%d', code)
+    switch lower(mode)
+        % =================================================================
+        case 'send'
+            if ~ismember(code,[6 7])
+                Eyelink('Message', '%d', code);
             end
-            % if running in test mode
-        else
-            % test profile: don't touch hardware
-            fprintf('[TEST - no Trigger] .\n');
-        end
+    end
+    % if running in test mode
+else
+    % test profile: don't touch hardware
+    fprintf('[TEST - no Trigger] .\n');
 end
 
-end
 
 % Helper
-function v = getfield_def(S,f,d)
-if isstruct(S) && isfield(S,f) && ~isempty(S.(f))
-    v = S.(f);
-else
-    v = d;
-end
+    function v = getfield_def(S,f,d)
+        if isstruct(S) && isfield(S,f) && ~isempty(S.(f))
+            v = S.(f);
+        else
+            v = d;
+        end
+    end
 end
