@@ -91,10 +91,11 @@ P.start.message          = 'Press any key to start';
 
 %% -------------------- Photodiode ----------------------------------------
 P.photodiode.enabled     = true;                                           % harmless in test mode
-P.photodiode.rectPix     = [0 0 100 100];                                    % top-left patch (open_ptb_screen will use this)
+P.photodiode.rectPix     = [0 0 120 120];                                  % top-left patch (open_ptb_screen will use this)
 P.photodiode.flipDur     = 0.016;                                          % ~1 frame @ 60Hz
 P.photodiode.mode        = 'steady';                                       % can be 'flash'
 P.photodiode.scope       = 'digits';                                       % or 'custom' with names below
+P.photodiode.color       = 255;
 % P.photodiode.names     = {'DIGIT','RECALL','DISTRACTOR'};
 
 %% -------------------- Response device prefs -----------------------------

@@ -53,7 +53,7 @@ end
 % 4) Draw photodiode patch (top-left) if enabled + this event uses PD
 % -------------------------------------------------------------------------
 if isfield(P,'photodiode') && isfield(P.photodiode,'enabled') && P.photodiode.enabled && showPD
-    Screen('FillRect', win, 255, S.pdRect);
+    Screen('FillRect', win, P.photodiode.color, S.pdRect);
 end
 
 % -------------------------------------------------------------------------
