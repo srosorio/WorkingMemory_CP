@@ -51,14 +51,25 @@ try
     C = make_event_codes();
     L = event_logger('init', P, C);
     
-    %  Run mic test code and automatic threshold detection
-    threshold = test_mic_response(P);
-
     % triggerbox init (start of session)
     send_trigger_unified('init', P);
 
+    % ----- Mic test start -----
+    event_logger('add', L, 'MIC_TEST_START', C.MIC_TEST_START, GetSecs(), 0, struct());
+    if ~P.mock.triggerbox
+        send_trigger_unified('send', P, C.MIC_TEST_START, P.trigger.pulseMs);
+    end
+
+    %  Run mic test code and automatic threshold detection
+    threshold = test_mic_response(P);
     % initalize PsychPortAudio
     pahandle = initialize_ptb_sound(P.audio.fs, P.audio.nchannels, P.audio.maxsecs);
+    
+    % ----- Mic testing end -----
+    event_logger('add', L, 'MIC_TEST_END', C.MIC_TEST_END, GetSecs(), 0, struct());
+    if ~P.mock.triggerbox
+        send_trigger_unified('send', P, C.MIC_TEST_END, P.trigger.pulseMs);
+    end
 
     % --- basic sanity checks on code arrays
     assert(numel(C.DIGIT_ON_IDX)        >= P.numDigits,        'Codes: DIGIT_ON_IDX too short');
@@ -111,9 +122,8 @@ try
         % =========================================================
         L.phase       = 'reading';
         L.trial       = 0;   % warm-up digits get "trial 0"
-        entered       = "";                         % what subject entered so far
-        % visibleSlots  = 1;                          % how many recall "places" are visible
-          tProbeStart   = GetSecs();
+        entered       = "";  % what subject entered so far
+        tProbeStart   = GetSecs();
         tDeadline     = tProbeStart + P.probe_max_total;
 
         Text_to_show_at_the_start = ['PART 1: Read aloud', '\n\n', 'Press any key to start'];
