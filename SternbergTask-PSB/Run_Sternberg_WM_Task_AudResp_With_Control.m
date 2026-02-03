@@ -54,23 +54,11 @@ try
     % triggerbox init (start of session)
     send_trigger_unified('init', P);
 
-    % ----- Mic test start -----
-    event_logger('add', L, 'MIC_TEST_START', C.MIC_TEST_START, GetSecs(), 0, struct());
-    if ~P.mock.triggerbox
-        send_trigger_unified('send', P, C.MIC_TEST_START, P.trigger.pulseMs);
-    end
-
     %  Run mic test code and automatic threshold detection
-    threshold = test_mic_response(P);
+    threshold = test_mic_response(P, C, L);
     
     % initalize PsychPortAudio
     pahandle = initialize_ptb_sound(P.audio.fs, P.audio.nchannels, P.audio.maxsecs);
-    
-    % ----- Mic testing end -----
-    event_logger('add', L, 'MIC_TEST_END', C.MIC_TEST_END, GetSecs(), 0, struct());
-    if ~P.mock.triggerbox
-        send_trigger_unified('send', P, C.MIC_TEST_END, P.trigger.pulseMs);
-    end
 
     % --- basic sanity checks on code arrays
     assert(numel(C.DIGIT_ON_IDX)        >= P.numDigits,        'Codes: DIGIT_ON_IDX too short');

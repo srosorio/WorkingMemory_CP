@@ -1,4 +1,4 @@
-function threshold = test_mic_response(P)
+function threshold = test_mic_response(P, C, L)
 %% Measure microphone noise floor and record speech sample with PTB screens
 % P: parameter structure containing P.screen.textSize and optionally P.screen.fontName
 close all;
@@ -27,6 +27,11 @@ try
     textColor = P.screen.textColor; % typically [255 255 255] or from P.screen
     
     %% --- Step 1: Record ambient noise ---
+    event_logger('add', L, 'MIC_NOISEFLOOR', C.MIC_NOISEFLOOR, GetSecs(), 0, struct());
+    if ~P.mock.triggerbox
+        send_trigger_unified('send', P, C.MIC_NOISEFLOOR, P.trigger.pulseMs);
+    end
+
     DrawFormattedText(win, sprintf('Step 1:\n\nStay silent for %d seconds...', noiseSecs), ...
         'center','center', textColor);
     Screen('Flip', win);
@@ -44,6 +49,11 @@ try
     fprintf('\n\nRecommended threshold for vocal response detection %d seconds...', threshold);
 
     %% --- Step 3: Record speech sample ---
+    event_logger('add', L, 'MIC_REC_SPEECH', C.MIC_REC_SPEECH, GetSecs(), 0, struct());
+    if ~P.mock.triggerbox
+        send_trigger_unified('send', P, C.MIC_REC_SPEECH, P.trigger.pulseMs);
+    end
+
     DrawFormattedText(win, 'Step 2:\n\nCount from 1 to 3 out loud ...', ...
         'center','center', textColor);
     Screen('Flip', win);
@@ -58,6 +68,11 @@ try
     % speechMax = max(abs(speechData));
 
     %% --- Step 4: Playback ---
+    event_logger('add', L, 'MIC_SPEECH_OUT', C.MIC_SPEECH_OUT, GetSecs(), 0, struct());
+    if ~P.mock.triggerbox
+        send_trigger_unified('send', P, C.MIC_SPEECH_OUT, P.trigger.pulseMs);
+    end
+
     DrawFormattedText(win, 'Playback of captured speech...', 'center','center', textColor);
     Screen('Flip', win);
     sound(speechData, fs);

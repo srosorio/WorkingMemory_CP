@@ -29,8 +29,9 @@ C.START_KEYPRESS    = 5;    % subject/experimenter actually pressed start
 %% ------------------------------------------------------------------------
 %  MIC SET UP
 % -------------------------------------------------------------------------
-C.MIC_TEST_START    = 6;
-C.MIC_TEST_END      = 7;
+C.MIC_NOISEFLOOR    = 6;
+C.MIC_REC_SPEECH    = 7;
+C.MIC_SPEECH_OUT    = 8;
 
 %% ------------------------------------------------------------------------
 %  BLOCK / TRIAL FLOW
