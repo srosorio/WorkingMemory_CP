@@ -1,0 +1,5 @@
+file_version,subject,condition,session,task_start_time,block,trial,phase,event_name,event_code,wall_clock,t_rel_sec,duration_to_next,rt,value_shown,entered_value,correct,key_name,device,note,json,screen_index,ifi,refresh_hz,pd_used
+Sergio_G01_CNS-LLF5HT7Y0,S01,OFFmed_OFFstim,20260204_121946,2026-02-04 12:19:57.885126,NaN,NaN,,MIC_NOISEFLOOR,6,2026-02-04 12:20:01.071148,3.185399,4.185703,,,,,,keyboard,,{},2,NaN,NaN,1
+Sergio_G01_CNS-LLF5HT7Y0,S01,OFFmed_OFFstim,20260204_121946,2026-02-04 12:19:57.885126,NaN,NaN,,MIC_REC_SPEECH,7,2026-02-04 12:20:05.256664,7.371102,6.680112,,,,,,keyboard,,{},2,NaN,NaN,1
+Sergio_G01_CNS-LLF5HT7Y0,S01,OFFmed_OFFstim,20260204_121946,2026-02-04 12:19:57.885126,NaN,NaN,,SESSION_START,1,2026-02-04 12:20:19.537747,21.652583,0.000999,,,,,,keyboard,,{},2,0.016667,60.000000,1
+Sergio_G01_CNS-LLF5HT7Y0,S01,OFFmed_OFFstim,20260204_121946,2026-02-04 12:19:57.885126,1,NaN,,BLOCK_START,10,2026-02-04 12:20:19.538592,21.653581,NaN,,,,,,keyboard,,{},2,0.016667,60.000000,1
