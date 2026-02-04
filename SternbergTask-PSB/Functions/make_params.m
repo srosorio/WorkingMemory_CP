@@ -280,7 +280,7 @@ switch upper(host)
         P.screen.fullscreen       = true;
         P.screen.strictFullscreen = true;
         P.mock.triggerbox         = false;   
-        P.screen.whichScreen      = 1;
+        % P.screen.whichScreen      = 1;
         % optional: P.screen.whichScreen = max(Screen('Screens'));
 end
 
