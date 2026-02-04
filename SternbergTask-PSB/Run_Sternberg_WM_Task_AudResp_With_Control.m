@@ -84,7 +84,7 @@ try
     %% --------------------------------------------------------------------
     
     % do eyelink calibration only at block 1 for now
-    if ismember(P.runProfile,{'eyetracker','both'})
+    if ismember(P.runProfile,{'eyetracker','fullSetup'})
         E = eyelink_manager('init', P, S.win);
         E = eyelink_manager('calibrate', P, S.win, E);
     end
@@ -106,7 +106,7 @@ try
         if ~P.mock.triggerbox
             send_trigger_unified('send', P, C.BLOCK_START, P.trigger.pulseMs);
             % send trigger for block start to eyelink for syncrhonization
-            if ismember(P.runProfile,'both')
+            if ismember(P.runProfile,'fullSetup')
                 Eyelink('Message', '%d', C.BLOCK_START);
             end
         end
@@ -505,7 +505,7 @@ try
         if ~P.mock.triggerbox
             send_trigger_unified('send', P, C.BLOCK_END,  P.trigger.pulseMs);
             % send trigger for block end to eyelink for syncrhonization
-            if ismember(P.runProfile,'both')
+            if ismember(P.runProfile,'fullSetup')
                 Eyelink('Message', '%d', C.BLOCK_END);
             end            
         end
@@ -523,7 +523,7 @@ try
     event_logger('add', L, 'SESSION_END', C.SESSION_END, GetSecs(), 0, struct());
     event_logger('close', L);
     send_trigger_unified('close', P);
-    if ismember(P.runProfile,{'eyetracker','both'})
+    if ismember(P.runProfile,{'eyetracker','fullSetup'})
         eyelink_manager('end', P, S.win, E);
     end
 
