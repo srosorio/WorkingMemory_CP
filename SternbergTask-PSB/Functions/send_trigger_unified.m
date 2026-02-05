@@ -61,6 +61,7 @@ if  ~ismember(P.runProfile, {'test', 'eyetracker'})
             switch lower(mode)
 
                 case 'init'
+                    P.trigger.comPort = 'COM5';
                     port = P.trigger.comPort;
                     if isfield(P,'trigger') && isfield(P.trigger,'serial') && isfield(P.trigger.serial,'baudBP')
                         baud = P.trigger.serial.baudBP;
