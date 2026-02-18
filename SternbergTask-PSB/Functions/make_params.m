@@ -117,7 +117,7 @@ P.audio.speechSecs       = 5;
 P.audio.noiseMultiplier  = 5;
 %% -------------------- Screen preferences (base) -------------------------
 try
-    whichScreen = max(Screen('Screens'));
+    whichScreen = 1; %max(Screen('Screens'));
 catch
     whichScreen = 0;
 end
