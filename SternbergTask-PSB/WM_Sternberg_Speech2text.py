@@ -3,12 +3,19 @@ import json
 import re
 import numpy as np
 from pathlib import Path
+import os
+import shutil
+
+ffmpeg_path = r"C:\Users\saosorio\AppData\Local\miniforge3\envs\whisper_env\Library\bin"
+os.environ["PATH"] = ffmpeg_path + os.pathsep + os.environ["PATH"]
+
+print("FFmpeg now resolves to:", shutil.which("ffmpeg"))
 
 # --------------------------
 # --- Configuration ---
 # --------------------------
-participant_id = "K03"
-runProfile     = "eeg"
+participant_id = "Y01"
+runProfile     = "fullSetup"
 
 audio_folder = Path(
     f"C:/Users/saosorio/Projects/WorkingMemory_CP/SternbergTask-PSB/output/{runProfile}/{participant_id}/OFFmed_OFFstim/AudioFiles"
@@ -61,7 +68,7 @@ clean_transcriptions = {}
 
 for wav in wavs_to_process:
     print(f"Processing {wav.name}...")
-
+    
     # --- Transcribe ---
     result = model.transcribe(
         str(wav),
