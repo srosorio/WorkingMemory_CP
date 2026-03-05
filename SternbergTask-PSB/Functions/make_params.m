@@ -286,7 +286,7 @@ end
 
 %% -------------------- File saving / paths --------------------------------
 % NOTE: this uses P.runProfile below, so make sure caller passes it consistently
-path_save_CSV = [char(P.runProfile), '\', P.subjectID, '\', P.condition];
+path_save_CSV = [char(P.runProfile), '\', P.subjectID, '\', P.condition, '\', P.block];
 
 P.saveDir       = fullfile(pwd, 'output', path_save_CSV);
 P.audio.saveDir = fullfile(pwd, 'output', path_save_CSV, 'AudioFiles');
