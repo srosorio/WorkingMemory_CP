@@ -44,7 +44,7 @@ end
 P.subjectID   = subjectID;
 P.sessionID   = string(datetime('now','Format','yyyyMMdd_HHmmss'));        % e.g. 20251104_101233
 P.condition   = condition;                                                 % e.g. OFFmed_OFFstim
-P.block       = 'TestBlock';
+P.block       = 'B01';
 %% -------------------- Blocks / Trials -----------------------------------
 P.nBlocks     = 1;                                                         % real blocks
 P.nTrials     = 10;                                                        % trials per block
@@ -305,7 +305,6 @@ P.edfFile = sprintf('%s_%s_%s_%s_eyedata.edf', ...
     P.subjectID, ...
     P.block, ...
     P.condition, ...
-    strrep(P.Text.taskCondition, " ", ""), ...
-    P.runProfile);
+    strrep(P.Text.taskCondition, " ", ""));
 
 end
