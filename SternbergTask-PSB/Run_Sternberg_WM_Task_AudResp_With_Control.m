@@ -152,6 +152,8 @@ try
         % loop through digit count for the reading phase
         for k = 1:P.probe_max_read
 
+            fprintf('\n\n >>> Reading phase: Presenting digit %s\n\n', num2str(k))
+
             d = P.digitPool(randi(numel(P.digitPool)));
             % --- DIGIT k ON ---
             [~, L] = markEvent(P, L, S, C.DIGIT_READING_ON_IDX(k), sprintf('DIGIT_READ%d_ON', k), ...
@@ -268,6 +270,8 @@ try
             %% --------------------------------------------------------------------
             L.phase = 'digit';
             for k = 1:P.numDigits
+                fprintf('\n\n >>> Memory phase: Presenting digit %s, trial %s\n\n', num2str(k), num2str(t))
+
                 % choose digit from pool
                 d = P.digitPool(randi(numel(P.digitPool)));
 
@@ -304,6 +308,8 @@ try
             % C) DISTRACTOR
             %% --------------------------------------------------------------------
             L.phase = 'distractor';
+            fprintf('\n\n Distractor phase: presenting distractor\n\n')
+
             D = generate_distractor(P);   % struct with: a,b,shownSum,trueSum,isCorrect,...
 
             % distractor ON (with value info logged)
@@ -396,6 +402,7 @@ try
             % --- collect up to P.probe_max_digits digits ---
             for k = 1:P.probe_max_digits
 
+                fprintf('\n\n >>> Recall phase: Recalling digit %s, trial %s\n\n', num2str(k), num2str(t))
                 % wait for user to enter a single digit (with deadline)
                 R = get_single_digit_vocal(tDeadline, P, L, k, pahandle);
                 if R.quit
