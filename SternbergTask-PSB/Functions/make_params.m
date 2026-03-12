@@ -140,7 +140,7 @@ P.eyelink.enable          = false;
 P.eyelink.ip              = '100.1.1.1';
 P.eyelink.sampleRateHz    = 1000;
 P.eyelink.calibrate       = true;
-P.eyelink.calType         = 'HV9';
+P.eyelink.calType         = 'HV5';
 
 %% -------------------- Mock flags (base) ---------------------------------
 % These may get overridden below by specific runProfile
