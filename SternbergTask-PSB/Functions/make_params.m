@@ -31,7 +31,7 @@ function P = make_params(runProfile, condition, subjectID)
 
 %% -------------------- Parse inputs & defaults ---------------------------
 if nargin < 1 || isempty(runProfile), runProfile = 'test'; end
-if nargin < 2 || isempty(condition),  condition  = 'OFFmed_OFFstim'; end
+if nargin < 2 || isempty(condition),  condition  = 'offmed_offstim'; end
 if nargin < 3 || isempty(subjectID),  subjectID  = 'SUBJ001'; end
 
 runProfile    = lower(runProfile);
@@ -44,7 +44,7 @@ end
 P.subjectID   = subjectID;
 P.sessionID   = string(datetime('now','Format','yyyyMMdd_HHmmss'));        % e.g. 20251104_101233
 P.condition   = condition;                                                 % e.g. OFFmed_OFFstim
-P.block       = 'B01';
+P.block       = 'b01';
 %% -------------------- Blocks / Trials -----------------------------------
 P.nBlocks     = 1;                                                         % real blocks
 P.nTrials     = 10;                                                        % trials per block
@@ -117,7 +117,7 @@ P.audio.speechSecs       = 5;
 P.audio.noiseMultiplier  = 5;
 %% -------------------- Screen preferences (base) -------------------------
 try
-    whichScreen = 1; %max(Screen('Screens'));
+    whichScreen = max(Screen('Screens'));
 catch
     whichScreen = 0;
 end
@@ -128,7 +128,7 @@ P.screen.skipSync         = 0;                                             % 0 =
 P.screen.bgColor          = 0;                                             % black → good for EEG/PD
 P.screen.textColor        = 255;
 P.screen.fontName         = 'Arial';
-P.screen.textSize         = 120;                                           % depends on monitor
+P.screen.textSize         = 140;                                           % depends on monitor
 P.screen.strictFullscreen = true;                                          % error if not truly fullscreen
 
 %% -------------------- Trigger / HW integration --------------------------
@@ -140,7 +140,7 @@ P.eyelink.enable          = false;
 P.eyelink.ip              = '100.1.1.1';
 P.eyelink.sampleRateHz    = 1000;
 P.eyelink.calibrate       = true;
-P.eyelink.calType         = 'HV9';
+P.eyelink.calType         = 'HV5';
 
 %% -------------------- Mock flags (base) ---------------------------------
 % These may get overridden below by specific runProfile
@@ -294,13 +294,13 @@ P.audio.saveDir = fullfile(pwd, 'output', path_save_CSV, 'AudioFiles');
 if ~exist(P.saveDir,'dir'), mkdir(P.saveDir); end
 if ~exist(P.audio.saveDir,'dir'), mkdir(P.audio.saveDir); end
 
-P.csvFile = sprintf('%s_%s_WM_%s_events.csv', ...
+P.csvFile = sprintf('%s_%s_wm_%s_events.csv', ...
     P.subjectID, ...
     P.block, ...
     P.condition ...
     );
 
-P.edfFile = sprintf('%s_%s_WM_%s_eyedata.edf', ...
+P.edfFile = sprintf('%s_%s_wm_%s_eyedata.edf', ...
     P.subjectID, ...
     P.block, ...
     P.condition ...
