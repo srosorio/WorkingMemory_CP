@@ -101,7 +101,7 @@ try
         end
         
         % set up instructions screen
-        Text_to_show_at_the_start = ['Part 2: Memory', '\n\n', P.start.message];
+        Text_to_show_at_the_start = ['Memory', '\n\n', P.start.message];
 
         % Show start page using markEvent (so PD + trigger are aligned)
         [~, L] = markEvent(P, L, S, C.START_PAGE_ON, 'START_PAGE_ON', struct(), ...
@@ -187,7 +187,7 @@ try
             % C) DISTRACTOR
             %% --------------------------------------------------------------------
             L.phase = 'distractor';
-            fprintf('\n\n Distractor phase: presenting distractor\n\n')
+            fprintf('\n\n >>> Distractor phase: presenting distractor')
 
             D = generate_distractor(P);   % struct with: a,b,shownSum,trueSum,isCorrect,...
 
@@ -219,6 +219,14 @@ try
 
                 % log distractor answer
                 event_logger('add', L, 'DISTRACTOR_ANS', C.DISTRACTOR_ANS, Rtf.tPress, 0, extraAns);
+
+                % print response type to terminal
+                if isCorrect
+                    RespStr = 'CORRECT';
+                else
+                    RespStr = 'INCORRECT';
+                end
+                fprintf(' >>> Response to problem was %s\n\n', RespStr)
 
                 % also send trigger for distractor answer
                 if ~P.mock.triggerbox
@@ -281,7 +289,7 @@ try
             % --- collect up to P.probe_max_digits digits ---
             for k = 1:P.probe_max_digits
 
-                fprintf('\n\n >>> Recall phase: Recalling digit %s, trial %s\n\n', num2str(k), num2str(t))
+                fprintf('\n\n >>> Recall phase: Recalling digit %s, trial %s\n', num2str(k), num2str(t))
                 % wait for user to enter a single digit (with deadline)
                 R = get_single_digit(tDeadline);
                 if R.quit
@@ -302,6 +310,14 @@ try
                     struct('value', sprintf('slot#%d', k), 'entered', R.digit, ...
                     'correct',  double(isCorrect), ...
                     'rt', R.tPress - tProbeStart, 'note', sprintf('probe_digit#%d', k)));
+                
+                % print response type to terminal
+                if isCorrect
+                    RespStr = 'CORRECT';
+                else
+                    RespStr = 'INCORRECT';
+                end
+                fprintf(' >>> Response to digit was %s\n\n', RespStr)
 
                 % trigger for this digit
                 send_trigger_unified('send', P, C.DIGIT_RECALL_INPUT(k), P.trigger.pulseMs);
