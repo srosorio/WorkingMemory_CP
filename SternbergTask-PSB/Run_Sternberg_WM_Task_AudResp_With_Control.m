@@ -99,7 +99,7 @@ try
     nTrials = P.nTrials;
 
     for b = 1:nBlocks
-        L.block = str2double(P.block(end));
+        L.block = P.block;
         
         % ---- log block start all systems -----
         event_logger('add', L, 'BLOCK_START', C.BLOCK_START, GetSecs(), 0, struct());
