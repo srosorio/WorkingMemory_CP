@@ -122,11 +122,22 @@ switch mode
 
         % save edf file
         edfFullPath = P.saveDir;
-        status = Eyelink('ReceiveFile', P.edfFile, edfFullPath, 1);
+        status = Eyelink('ReceiveFile', 'tmp.edf', edfFullPath, 1);
         fprintf('ReceiveFile status = %d\n', status);
 
         % shut down eyelink
         Eyelink('Shutdown');
+
+        % rename EDF to desired filename
+        oldFile = fullfile(edfFullPath, 'tmp.edf');
+        newFile = fullfile(edfFullPath, P.edfFile);
+
+        if exist(oldFile, 'file')
+            movefile(oldFile, newFile);
+            fprintf('EDF renamed to: %s\n', newFile);
+        else
+            warning('EDF file not found: %s', oldFile);
+        end
 
     otherwise
         error('Unknown eyelink mode: %s', mode);

@@ -1,25 +1,16 @@
-function R = get_tf_response(P, deadlineAbs)
+function R = get_tf_response(P)
 % -------------------------------------------------------------------------
-% get_tf_response  |  Alavie - Sternberg WM Task
+% get_tf_response (NO DEADLINE VERSION)
 %
-% Waits (blocking) for a True / False response until an **absolute** deadline.
-% Supports keyboard right now; response box path is a stub to be filled in
-% when hardware is ready.
+% Waits indefinitely for a True / False response.
+% After response, waits 500 ms, then returns.
 %
 % RETURNS struct R:
 %   R.madeResponse : true/false
 %   R.isTrue       : true if "True" key pressed (J), false if "False" key (F)
 %   R.keyName      : 'J' or 'F'
 %   R.tPress       : GetSecs() time of keypress
-%   R.rt           : (not filled here; caller can compute tPress - onset)
-%
-% USAGE
-%   R = get_tf_response(P, deadlineAbs)
-%
-% NOTES
-%   - ESCAPE aborts the task with an error.
-%   - deadlineAbs is an absolute time (i.e. t0 + window), not a duration.
-%   - For EEG timing, caller usually logs at the frame where distractor was shown.
+%   R.rt           : (left NaN; caller computes if needed)
 % -------------------------------------------------------------------------
 
 % ---- default return ----
@@ -34,26 +25,24 @@ R = struct( ...
 % 1) Response box path (stub)
 % =====================================================================
 if isfield(P, 'input') && isfield(P.input, 'useKeyboard') && ~P.input.useKeyboard
-    % Placeholder for real RB implementation
-    fprintf('[Input] Response Box selected, but not configured yet. Waiting until deadline...\n');
-    while GetSecs() < deadlineAbs
-        WaitSecs(0.01);
-    end
+    fprintf('[Input] Response Box selected, but not configured yet.\n');
     return;
 end
 
 % =====================================================================
-% 2) Keyboard path
+% 2) Keyboard path (NO DEADLINE)
 % =====================================================================
-keyTrue  = KbName('j');       % "True"
-keyFalse = KbName('f');       % "False"
-keyQuit  = KbName('ESCAPE');  % abort
+keyTrue  = KbName('j');       
+keyFalse = KbName('f');       
+keyQuit  = KbName('ESCAPE');  
 
-KbReleaseWait;  % make sure no key is being held from before
+KbReleaseWait;  % avoid carry-over keypress
 
-while GetSecs() < deadlineAbs
+while true
     [down, t, kc] = KbCheck(-1);
+
     if ~down
+        WaitSecs(0.001); % reduce CPU load
         continue;
     end
 
@@ -68,6 +57,7 @@ while GetSecs() < deadlineAbs
         R.isTrue       = true;
         R.keyName      = 'J';
         R.tPress       = t;
+        WaitSecs(0.5);   % <-- NEW: 500 ms pause
         return;
     end
 
@@ -77,9 +67,8 @@ while GetSecs() < deadlineAbs
         R.isTrue       = false;
         R.keyName      = 'F';
         R.tPress       = t;
+        WaitSecs(0.5);   % <-- NEW: 500 ms pause
         return;
     end
 end
-
-% timeout → return defaults
 end

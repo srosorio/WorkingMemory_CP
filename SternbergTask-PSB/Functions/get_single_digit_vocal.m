@@ -88,7 +88,9 @@ nPostSamples = round(postSilence * fs);
 audioAll = [audioAll; zeros(nPostSamples,1)];
 
 % save audio file
-audioFileName = fullfile(P.audio.saveDir, sprintf('%s_Block0%s_Trial0%s_Digit0%s.wav', P.subjectID, num2str(L.block), num2str(L.trial), num2str(k) ));
+audioFileName = fullfile(P.audio.saveDir, ...
+                    sprintf('%s_%s_trial%s_digit%s.wav', ...
+                    P.subjectID, L.block, sprintf('%02d', L.trial), sprintf('%02d', k) ));
 
 % Write waveform to WAV file
 audiowrite(audioFileName, audioAll, fs);

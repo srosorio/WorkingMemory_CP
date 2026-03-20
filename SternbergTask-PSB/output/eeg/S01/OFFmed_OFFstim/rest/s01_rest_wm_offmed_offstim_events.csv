@@ -1,0 +1,3 @@
+file_version,subject,condition,session,task_start_time,block,trial,phase,event_name,event_code,wall_clock,t_rel_sec,duration_to_next,rt,value_shown,entered_value,correct,key_name,device,note,json,screen_index,ifi,refresh_hz,pd_used
+Sergio_G01_CNS-DDJXM3V64,s01,offmed_offstim,20260318_195008,2026-03-18 19:50:16.994787,NaN,NaN,,SESSION_START,1,2026-03-18 19:50:18.890480,1.895305,0.001359,,,,,,keyboard,,{},2,0.016667,60.000000,1
+Sergio_G01_CNS-DDJXM3V64,s01,offmed_offstim,20260318_195008,2026-03-18 19:50:16.994787,NaN,NaN,,BLOCK_START,10,2026-03-18 19:50:18.891496,1.896665,NaN,,,,,,keyboard,,{},2,0.016667,60.000000,1

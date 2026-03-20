@@ -81,7 +81,7 @@ for i = 1:n
 
     % Special handling: runProfile dropdown
     if strcmpi(field,'runProfile')
-        validProfiles = {'eeg','test','eyetracker','both'};
+        validProfiles = {'eeg','test','eyetracker','fullSetup'};
         valIdx = find(strcmpi(validProfiles, string(val)), 1);
         if isempty(valIdx), valIdx = 1; end
         handles.(safeFieldName) = uicontrol(fig,'Style','popupmenu',...

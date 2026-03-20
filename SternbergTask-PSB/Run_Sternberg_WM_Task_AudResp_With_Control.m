@@ -47,7 +47,7 @@ try
     %% --------------------------------------------------------------------
     % 1) Init: params, event codes, logger, triggeGUIr
     %% --------------------------------------------------------------------
-    P = make_params('eeg','OFFmed_OFFstim','S01');                         % can change subject/session here (also in the UI)
+    P = make_params('eeg','offmed_offstim','s01');                         % can change subject/session here (also in the UI)
     C = make_event_codes();
     L = event_logger('init', P, C);
     
@@ -84,7 +84,7 @@ try
     %% --------------------------------------------------------------------
     
     % do eyelink calibration only at block 1 for now
-    if ismember(P.runProfile,{'eyetracker','both'})
+    if ismember(P.runProfile,{'eyetracker','fullSetup'})
         E = eyelink_manager('init', P, S.win);
         E = eyelink_manager('calibrate', P, S.win, E);
     end
@@ -99,14 +99,14 @@ try
     nTrials = P.nTrials;
 
     for b = 1:nBlocks
-        L.block = str2double(P.block(end));
+        L.block = P.block;
         
         % ---- log block start all systems -----
         event_logger('add', L, 'BLOCK_START', C.BLOCK_START, GetSecs(), 0, struct());
         if ~P.mock.triggerbox
             send_trigger_unified('send', P, C.BLOCK_START, P.trigger.pulseMs);
             % send trigger for block start to eyelink for syncrhonization
-            if ismember(P.runProfile,'both')
+            if ismember(P.runProfile,'fullSetup')
                 Eyelink('Message', '%d', C.BLOCK_START);
             end
         end
@@ -151,6 +151,8 @@ try
         
         % loop through digit count for the reading phase
         for k = 1:P.probe_max_read
+
+            fprintf('\n\n >>> Reading phase: Presenting digit %s\n\n', num2str(k))
 
             d = P.digitPool(randi(numel(P.digitPool)));
             % --- DIGIT k ON ---
@@ -268,6 +270,8 @@ try
             %% --------------------------------------------------------------------
             L.phase = 'digit';
             for k = 1:P.numDigits
+                fprintf('\n\n >>> Memory phase: Presenting digit %s, trial %s\n\n', num2str(k), num2str(t))
+
                 % choose digit from pool
                 d = P.digitPool(randi(numel(P.digitPool)));
 
@@ -304,6 +308,8 @@ try
             % C) DISTRACTOR
             %% --------------------------------------------------------------------
             L.phase = 'distractor';
+            fprintf('\n\n Distractor phase: presenting distractor\n\n')
+
             D = generate_distractor(P);   % struct with: a,b,shownSum,trueSum,isCorrect,...
 
             % distractor ON (with value info logged)
@@ -396,6 +402,7 @@ try
             % --- collect up to P.probe_max_digits digits ---
             for k = 1:P.probe_max_digits
 
+                fprintf('\n\n >>> Recall phase: Recalling digit %s, trial %s\n\n', num2str(k), num2str(t))
                 % wait for user to enter a single digit (with deadline)
                 R = get_single_digit_vocal(tDeadline, P, L, k, pahandle);
                 if R.quit
@@ -505,7 +512,7 @@ try
         if ~P.mock.triggerbox
             send_trigger_unified('send', P, C.BLOCK_END,  P.trigger.pulseMs);
             % send trigger for block end to eyelink for syncrhonization
-            if ismember(P.runProfile,'both')
+            if ismember(P.runProfile,'fullSetup')
                 Eyelink('Message', '%d', C.BLOCK_END);
             end            
         end
@@ -523,7 +530,7 @@ try
     event_logger('add', L, 'SESSION_END', C.SESSION_END, GetSecs(), 0, struct());
     event_logger('close', L);
     send_trigger_unified('close', P);
-    if ismember(P.runProfile,{'eyetracker','both'})
+    if ismember(P.runProfile,{'eyetracker','fullSetup'})
         eyelink_manager('end', P, S.win, E);
     end
 

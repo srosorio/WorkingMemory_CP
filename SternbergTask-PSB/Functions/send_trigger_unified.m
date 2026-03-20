@@ -61,6 +61,7 @@ if  ~ismember(P.runProfile, {'test', 'eyetracker'})
             switch lower(mode)
 
                 case 'init'
+                    P.trigger.comPort = 'COM5';
                     port = P.trigger.comPort;
                     if isfield(P,'trigger') && isfield(P.trigger,'serial') && isfield(P.trigger.serial,'baudBP')
                         baud = P.trigger.serial.baudBP;
@@ -135,6 +136,11 @@ if  ~ismember(P.runProfile, {'test', 'eyetracker'})
                     IOPort('Write', TB.fh, TB.idle, 1);
                     TB.lastWriteT = GetSecs();
 
+                    % send same trigger to eyelink
+                    if ismember(P.runProfile,'fullSetup')
+                        Eyelink('Message', '%d', code);
+                    end
+
                 case 'set'
                     if isempty(TB) || ~TB.isOpen
                         warning('BrainProducts not initialized.');
@@ -148,7 +154,11 @@ if  ~ismember(P.runProfile, {'test', 'eyetracker'})
 
                     IOPort('Write', TB.fh, uint8(bitand(code,255)), 1);
                     TB.lastWriteT = GetSecs();
-
+                    
+                    % send same trigger to eyelink
+                    if ismember(P.runProfile,'fullSetup')
+                        Eyelink('Message', '%d', code);
+                    end
                 case 'close'
                     if ~isempty(TB) && TB.isOpen && ~TB.mock
                         try
@@ -165,11 +175,10 @@ if  ~ismember(P.runProfile, {'test', 'eyetracker'})
                     error('Unknown mode %s', mode);
             end
             TB_BP = TB;   % save state back to persistent
-            % if running in eyetracker mode
 
-            % #########################################################################
-            % ### BIOSEMI (serial/fwrite version)
-            % #########################################################################
+        % #########################################################################
+        % ### BIOSEMI (serial/fwrite version)
+        % #########################################################################
         case 'BS'
 
             % Make persistent available locally
