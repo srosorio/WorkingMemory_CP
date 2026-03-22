@@ -45,7 +45,7 @@ speechStarted  = false;
 silenceCounter = 0;
 
 %% 4) Capture loop
-while GetSecs() < deadlineAbs
+while true 
     [chunk, ~, ~, ~] = PsychPortAudio('GetAudioData', pahandle, 0);
     if isempty(chunk)
         WaitSecs(chunkSec);
