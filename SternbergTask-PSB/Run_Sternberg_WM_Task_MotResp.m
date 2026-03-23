@@ -51,8 +51,8 @@ try
     C = make_event_codes();
     L = event_logger('init', P, C);
     
-    % initalize PsychPortAudio
-    pahandle = initialize_ptb_sound(P.audio.fs, P.audio.nchannels, P.audio.maxsecs);
+    % triggerbox init (start of session)
+    send_trigger_unified('init', P);
 
     % --- basic sanity checks on code arrays
     assert(numel(C.DIGIT_ON_IDX)        >= P.numDigits,        'Codes: DIGIT_ON_IDX too short');
@@ -92,7 +92,7 @@ try
         
         % ---- log block start all systems -----
         event_logger('add', L, 'BLOCK_START', C.BLOCK_START, GetSecs(), 0, struct());
-        if ~P.mock.triggerbox
+        ff0112233222222if ~P.mock.triggerbox
             send_trigger_unified('send', P, C.BLOCK_START, P.trigger.pulseMs);
             % send trigger for block start to eyelink for syncrhonization
             if ismember(P.runProfile,'fullSetup')
@@ -226,7 +226,7 @@ try
                 else
                     RespStr = 'INCORRECT';
                 end
-                fprintf(' >>> Response to problem was %s\n\n', RespStr)
+                fprintf(' \n>>> Response to problem was %s\n\n', RespStr)
 
                 % also send trigger for distractor answer
                 if ~P.mock.triggerbox

@@ -55,7 +55,7 @@ addpath(fullfile(currentFolder, 'Functions'));
 %  Run Main Experiment Script
 % -------------------------------------------------------------------------
 % Replace the script name below with the correct task version as needed.
-Run_Sternberg_WM_Task_AudResp_With_Control();
-% Run_Sternberg_WM_Task_MotResp();
+% Run_Sternberg_WM_Task_AudResp_With_Control();
+Run_Sternberg_WM_Task_MotResp();
 %% End of Script (Alavie/Sergio)
 % =========================================================================
