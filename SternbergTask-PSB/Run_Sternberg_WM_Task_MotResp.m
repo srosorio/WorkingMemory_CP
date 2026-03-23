@@ -92,7 +92,7 @@ try
         
         % ---- log block start all systems -----
         event_logger('add', L, 'BLOCK_START', C.BLOCK_START, GetSecs(), 0, struct());
-        ff0112233222222if ~P.mock.triggerbox
+        if ~P.mock.triggerbox
             send_trigger_unified('send', P, C.BLOCK_START, P.trigger.pulseMs);
             % send trigger for block start to eyelink for syncrhonization
             if ismember(P.runProfile,'fullSetup')
