@@ -11,7 +11,7 @@ try
     bits            = 16;           % Bit depth
     noiseSecs       = 3;       % Duration of silence recording
     speechSecs      = 5;      % Duration of speech recording
-    noiseMultiplier = 5; % Multiplier for speech threshold heuristic
+    noiseMultiplier = 4; % Multiplier for speech threshold heuristic
     outputFigFile   = 'Noise_Speech_Measurement.png'; % File to save figure
 
     % --- Open PTB screen ---
