@@ -14,14 +14,13 @@ print("FFmpeg now resolves to:", shutil.which("ffmpeg"))
 # --------------------------
 # --- Configuration ---
 # --------------------------
-participant_id = "Y01"
+participant_id = "cpeeg02"
+block          = 'b02'
 runProfile     = "fullSetup"
 
 audio_folder = Path(
-    f"C:/Users/saosorio/Projects/WorkingMemory_CP/SternbergTask-PSB/output/{runProfile}/{participant_id}/OFFmed_OFFstim/AudioFiles"
+    f"C:/Users/saosorio/Projects/WorkingMemory_CP/SternbergTask-PSB/output/{runProfile}/{participant_id}/offmed_offstim/{block}/AudioFiles"
 )
-
-block = "all"  # optional filter by block number
 
 # --------------------------
 # --- Load Whisper model ---
@@ -51,12 +50,11 @@ all_wavs = sorted([f for f in audio_folder.glob("*.wav")
                    if f.name.startswith(participant_id)])
 
 # Optional: filter by block
-if block != "all":
-    block_num = int(block)
-    pattern = f"Block{block_num:02d}"
-    wavs_to_process = [f for f in all_wavs if pattern in f.name]
-else:
-    wavs_to_process = all_wavs
+
+# block_num = int(block)
+pattern = block  # e.g., 'b01'
+wavs_to_process = [f for f in all_wavs if pattern in f.name]
+
 
 print(f"Found {len(wavs_to_process)} audio files")
 

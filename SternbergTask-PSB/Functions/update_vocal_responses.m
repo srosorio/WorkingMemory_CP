@@ -1,4 +1,4 @@
-function update_vocal_responses(participant_id, runProfile, condition)
+function update_vocal_responses(participant_id, runProfile, condition, block)
 %UPDATE_VOCAL_RESPONSES Update task CSV with vocal responses from Whisper
 %
 % This function reads the original CSV exported from the task and the JSON
@@ -13,9 +13,9 @@ function update_vocal_responses(participant_id, runProfile, condition)
 mainDir = 'C:\Users\saosorio\Projects\WorkingMemory_CP\SternbergTask-PSB\output';
 
 % CSV exported from task (pattern unchanged)
-csv_path = fullfile(mainDir, runProfile, participant_id, condition, ...
-    sprintf('%s_*_%s_SameOrder_%s_events.csv', ...
-    participant_id,condition,runProfile));
+csv_path = fullfile(mainDir, runProfile, participant_id, condition, block, ...
+    sprintf('%s_%s_wm_%s_events.csv', ...
+    participant_id, block, condition));
 
 csv_struct = dir(csv_path);
 
@@ -26,7 +26,7 @@ assert(~isempty(csv_struct), ...
 fprintf('Found %d CSV file(s) to update.\n', numel(csv_struct));
 
 % JSON with transcribed vocal responses (shared)
-json_file = fullfile(mainDir, runProfile, participant_id, condition, ...
+json_file = fullfile(mainDir, runProfile, participant_id, condition, block, ...
     'AudioFiles', 'transcriptions_clean.json');
 
 %% --------------------------
