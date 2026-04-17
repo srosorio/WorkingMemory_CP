@@ -14,8 +14,8 @@ print("FFmpeg now resolves to:", shutil.which("ffmpeg"))
 # --------------------------
 # --- Configuration ---
 # --------------------------
-participant_id = "cpeeg02"
-block          = 'b02'
+participant_id = "cpeeg01"
+block          = 'b01'
 runProfile     = "fullSetup"
 
 audio_folder = Path(
@@ -28,15 +28,15 @@ audio_folder = Path(
 model = whisper.load_model("base")
 
 digit_map = {
-    "zero": 0, "0": 0,
+    "zero": 0, "0": 0, "see you": 0, "oh": 0, "o": 0,
     "one": 1, "1": 1,
     "two": 2, "2": 2, "tool": 2, "too": 2, "june": 2, "do": 2, "doo": 2,
     "three": 3, "3": 3, "free": 3,
-    "four": 4, "4": 4,
-    "five": 5, "5": 5,
+    "four": 4, "4": 4, "for": 4, "fore": 4, "wow": 4,
+    "five": 5, "5": 5, "bye": 5, "why": 5,
     "six": 6, "6": 6,
     "seven": 7, "7": 7,
-    "eight": 8, "8": 8,
+    "eight": 8, "8": 8, "hey": 8, "ate": 8,
     "nine": 9, "9": 9
 }
 
