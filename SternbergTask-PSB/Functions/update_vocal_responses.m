@@ -125,53 +125,57 @@ for f = 1:numel(csv_struct)
         end
     end
 
-%%% --------------------------
-% --- Update distractor responses ---
-%% --------------------------
-for i = 1:height(T)
-    row = T(i,:);
-    if strcmp(row.phase, 'distractor') && strcmp(row.event_name, 'DISTRACTOR_ANS')
+    %%% --------------------------
+    % --- Update distractor responses ---
+    %% --------------------------
+    for i = 1:height(T)
+        row = T(i,:);
+        if strcmp(row.phase, 'distractor') && strcmp(row.event_name, 'DISTRACTOR_ANS')
 
-        % Build audio filename and JSON field key
-        audio_file = sprintf('%s_%s_trial%02d_truefalse.wav', ...
-            row.subject{1}, block, ...
-            str2double(row.trial{1}));
+            % Build audio filename and JSON field key
+            audio_file = sprintf('%s_%s_trial%02d_truefalse.wav', ...
+                row.subject{1}, block, ...
+                str2double(row.trial{1}));
 
-        audio_field = strrep(audio_file, '.', '_');
+            audio_field = strrep(audio_file, '.', '_');
 
-        if isfield(data_json, audio_field)
-            entered = data_json.(audio_field);  % e.g. 'true' or 'false' from Whisper
+            if isfield(data_json, audio_field)
+                entered = data_json.(audio_field);  % e.g. 'true' or 'false' from Whisper
 
-            % --- Parse value_shown to determine ground truth ---
-            % value_shown is like '9+3=10' or '1+5=6'
-            value_shown = row.value_shown{1};
-            tokens = regexp(value_shown, '(\d+)\+(\d+)=(\d+)', 'tokens');
-            if ~isempty(tokens)
-                a        = str2double(tokens{1}{1});
-                b        = str2double(tokens{1}{2});
-                shown    = str2double(tokens{1}{3});
-                expected = (a + b == shown);  % true if arithmetic is correct, false if not
-            else
-                warning('Could not parse value_shown: %s at row %d', value_shown, i);
-                continue
+                % --- Parse value_shown to determine ground truth ---
+                % value_shown is like '9+3=10' or '1+5=6'
+                value_shown = row.value_shown{1};
+                tokens = regexp(value_shown, '(\d+)\+(\d+)=(\d+)', 'tokens');
+                if ~isempty(tokens)
+                    a        = str2double(tokens{1}{1});
+                    b        = str2double(tokens{1}{2});
+                    shown    = str2double(tokens{1}{3});
+                    expected = (a + b == shown);  % true if arithmetic is correct, false if not
+                else
+                    warning('Could not parse value_shown: %s at row %d', value_shown, i);
+                    continue
+                end
+
+                % --- Compare Whisper response to ground truth ---
+                % Handle NaN (failed transcription)
+                if isnumeric(entered) && isnan(entered)
+                    T.entered_value{i} = 'NaN';
+                    T.correct{i}       = 'NaN';
+
+                    row_json         = jsondecode(T.json{i});
+                    row_json.entered = 'NaN';
+                    row_json.correct = 'NaN';
+                    T.json{i}        = jsonencode(row_json);
+
+                    warning('NaN transcription at row %d, trial %s', i, row.trial{1});
+                    continue
+                end
+
+                entered_bool = logical(entered);
+                is_correct   = (entered_bool == expected);
             end
-
-            % --- Compare Whisper response to ground truth ---
-            entered_bool = logical(entered);
-            is_correct   = (entered_bool == expected);
-
-            % --- Update table ---
-            T.entered_value{i} = entered;
-            T.correct{i}       = num2str(is_correct);
-
-            % --- Update JSON field ---
-            row_json         = jsondecode(T.json{i});
-            row_json.entered = entered;
-            row_json.correct = is_correct;
-            T.json{i}        = jsonencode(row_json);
         end
     end
-end
 
     %% --------------------------
     % --- Save updated CSV ---
