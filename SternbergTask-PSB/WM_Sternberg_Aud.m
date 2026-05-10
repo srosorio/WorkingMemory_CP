@@ -1,3 +1,4 @@
+
 %% =========================================================================
 %% Working Memory – Sternberg Task
 %  Alavie / Sergio
@@ -42,6 +43,7 @@ sca;
 % Add the folder containing custom functions 
 currentFolder = pwd; 
 addpath(fullfile(currentFolder, 'Functions'));
+addpath(genpath('C:\Users\cns-co-admin\Documents\MATLAB\pl-neon-matlab-main\matlab'))
 
 %% ---------------------------------------------------------------------*----
 %  Optional: Trigger Test
