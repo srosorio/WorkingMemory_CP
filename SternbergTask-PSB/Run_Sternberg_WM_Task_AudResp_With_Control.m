@@ -50,13 +50,13 @@ try
     P = make_params('eeg','offmed_offstim','s01');                         % can change subject/session here (also in the UI)
     C = make_event_codes();
     L = event_logger('init', P, C);
-    
+
     % triggerbox init (start of session)
     send_trigger_unified('init', P);
 
     %  Run mic test code and automatic threshold detection
     threshold = test_mic_response(P, C, L);
-    
+
     % initalize PsychPortAudio
     pahandle = initialize_ptb_sound(P.audio.fs, P.audio.nchannels, P.audio.maxsecs);
 
@@ -78,15 +78,18 @@ try
     % Gec Microphone threshold
     %% --------------------------------------------------------------------
     P.audio.threshold = threshold;
-    
+
     %% --------------------------------------------------------------------
     % Initialize eyelink (if needed)
     %% --------------------------------------------------------------------
-    
+
+    % Eyetracker structure
+    E = struct('system', 'none');
+
     % do eyelink calibration only at block 1 for now
     if ismember(P.runProfile,{'eyetracker','fullSetup'})
-        E = eyelink_manager('init', P, S.win);
-        E = eyelink_manager('calibrate', P, S.win, E);
+        E = eyetracker_manager('init', P, S.win);
+        E = eyetracker_manager('calibrate', P, S.win, E);
     end
 
     % session start in logger
@@ -100,15 +103,15 @@ try
 
     for b = 1:nBlocks
         L.block = P.block;
-        
+
         % ---- log block start all systems -----
         event_logger('add', L, 'BLOCK_START', C.BLOCK_START, GetSecs(), 0, struct());
         if ~P.mock.triggerbox
-            send_trigger_unified('send', P, C.BLOCK_START, P.trigger.pulseMs);
-            % send trigger for block start to eyelink for syncrhonization
-            if ismember(P.runProfile,'fullSetup')
-                Eyelink('Message', '%d', C.BLOCK_START);
-            end
+            send_trigger_unified('send', P, C.BLOCK_START, P.trigger.pulseMs, E);
+            % % send trigger for block start to eyelink for syncrhonization
+            % if ismember(P.runProfile,'fullSetup')
+            %     Eyelink('Message', '%d', C.BLOCK_START);
+            % end
         end
 
         % --------------------------------------------------------------------
@@ -119,10 +122,10 @@ try
         entered       = "";  % what subject entered so far
         tProbeStart   = GetSecs();
         tDeadline     = tProbeStart + P.probe_max_total;
-        
+
         % set up screen for instructions
         Text_to_show_at_the_start = ['PART 1: Read aloud', '\n\n', 'Press any key to start'];
-        
+
         % Show start page using markEvent (so PD + trigger are aligned)
         [~, L] = markEvent(P, L, S, C.START_PAGE_ON, 'START_PAGE_ON', struct(), ...
             @(w) DrawFormattedText(w, Text_to_show_at_the_start, 'center', 'center', P.screen.textColor));
@@ -132,7 +135,7 @@ try
 
         % mark keypress
         if ~P.mock.triggerbox
-            send_trigger_unified('send', P, C.START_KEYPRESS, P.trigger.pulseMs);
+            send_trigger_unified('send', P, C.START_KEYPRESS, P.trigger.pulseMs, E);
         end
 
         % quick sanity pulse (if trigger is connected)
@@ -142,13 +145,13 @@ try
             fprintf('[Trigger sanity pulse failed] %s\n', ME.message);
             error
         end
-        
+
         % reading phase has started
         event_logger('add', L, 'READING_START',  C.DIGITREAD_START,  GetSecs(), 0, struct());
         if ~P.mock.triggerbox
-            send_trigger_unified('send', P, C.DIGITREAD_START, P.trigger.pulseMs);
+            send_trigger_unified('send', P, C.DIGITREAD_START, P.trigger.pulseMs, E);
         end
-        
+
         % loop through digit count for the reading phase
         for k = 1:P.probe_max_read
 
@@ -222,7 +225,7 @@ try
         %% --------------------------------------------------------------------
         % DIGIT MEMORY PHASE
         %% --------------------------------------------------------------------
-        
+
         % set up instructions screen
         Text_to_show_at_the_start = ['Part 2: Memory', '\n\n', P.start.message];
 
@@ -231,7 +234,7 @@ try
             @(w) DrawFormattedText(w, Text_to_show_at_the_start, 'center', 'center', P.screen.textColor));
 
         % Wait for experimenter/subject to press start
-         wait_for_start(P, S, L, C, Text_to_show_at_the_start);
+        wait_for_start(P, S, L, C, Text_to_show_at_the_start);
 
         % mark keypress
         if ~P.mock.triggerbox
@@ -245,10 +248,10 @@ try
             fprintf('[Trigger sanity pulse failed] %s\n', ME.message);
             error
         end
-        
+
         % loop through trial count
         for t = 1:nTrials
-            
+
             % ----- trial start -----
             L.trial = t;
             event_logger('add', L, 'TRIAL_CHANGE', C.TRIAL_CHANGE, GetSecs(), 0, struct('note','trial transition'));
@@ -266,7 +269,7 @@ try
                 @(w) redraw_blank_frame(w, P));
 
             %% --------------------------------------------------------------------
-            % DIGIT PRESENTATION 
+            % DIGIT PRESENTATION
             %% --------------------------------------------------------------------
             L.phase = 'digit';
             for k = 1:P.numDigits
@@ -422,7 +425,7 @@ try
                     'rt', R.tPress - tProbeStart, 'note', sprintf('probe_digit#%d', k)));
 
                 % trigger for this digit
-                send_trigger_unified('send', P, C.DIGIT_RECALL_INPUT(k), P.trigger.pulseMs);
+                send_trigger_unified('send', P, C.DIGIT_RECALL_INPUT(k), P.trigger.pulseMs, E);
 
                 % after entry: clear "?" or update display
                 if strcmpi(P.probe.displayStyle, 'question')
@@ -500,7 +503,7 @@ try
             %% --------------------------------------------------------------------
             event_logger('add', L, 'TRIAL_END', C.TRIAL_END, GetSecs(), 0, struct());
             if ~P.mock.triggerbox
-                send_trigger_unified('send', P, C.TRIAL_END, P.trigger.pulseMs);
+                send_trigger_unified('send', P, C.TRIAL_END, P.trigger.pulseMs, E);
             end
 
         end % trial loop
@@ -510,11 +513,11 @@ try
         %% -------------------------------------------------------------
         event_logger('add', L, 'BLOCK_END', C.BLOCK_END, GetSecs(), 0, struct());
         if ~P.mock.triggerbox
-            send_trigger_unified('send', P, C.BLOCK_END,  P.trigger.pulseMs);
-            % send trigger for block end to eyelink for syncrhonization
-            if ismember(P.runProfile,'fullSetup')
-                Eyelink('Message', '%d', C.BLOCK_END);
-            end            
+            send_trigger_unified('send', P, C.BLOCK_END,  P.trigger.pulseMs, E);
+            % % send trigger for block end to eyelink for syncrhonization
+            % if ismember(P.runProfile,'fullSetup')
+            %     Eyelink('Message', '%d', C.BLOCK_END);
+            % end
         end
     end % block loop
 
@@ -531,7 +534,7 @@ try
     event_logger('close', L);
     send_trigger_unified('close', P);
     if ismember(P.runProfile,{'eyetracker','fullSetup'})
-        eyelink_manager('end', P, S.win, E);
+        eyetracker_manager('end', P, S.win, E);
     end
 
     fprintf('[OK] Step 5 complete. Check CSV for *_ON/OFF with stable visuals.\n');
@@ -540,13 +543,12 @@ catch ME
     %% --------------------------------------------------------------------
     % Error handling
     %% --------------------------------------------------------------------
-    try, ShowCursor; Priority(0); sca; end
-    try, event_logger('close', L); end
-    try, send_trigger_unified('close', P); end
-    try, Eyelink('StopRecording'); end
-    try, Eyelink('CloseFile'); end
-    try, Eyelink('Shutdown'); end
-    try, Screen('CloseAll'); end
+    %% --------------------------------------------------------------------
+    try, ShowCursor; Priority(0); sca;                    end
+    try, event_logger('close', L);                        end
+    try, send_trigger_unified('close', P);                end
+    try, eyetracker_manager('end', P, S.win, E);          end
+    try, Screen('CloseAll');                              end
     rethrow(ME);
 end
 end

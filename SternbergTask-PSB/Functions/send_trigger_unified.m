@@ -1,62 +1,63 @@
-function send_trigger_unified(mode, P, code, pulseMs, eeg_system)
+function send_trigger_unified(mode, P, code, pulseMs, E)
 % -------------------------------------------------------------------------
 % Unified Trigger Function (BrainProducts TriggerBox OR BioSemi)
 % -------------------------------------------------------------------------
 % USAGE:
-%   send_trigger_unified('init',  P, [], [], eeg_system)
-%   send_trigger_unified('send',  P, code, pulseMs, eeg_system)
-%   send_trigger_unified('set',   P, byte, [], eeg_system)
-%   send_trigger_unified('close', P, [], [], eeg_system)
+%   send_trigger_unified('init',  P, [], [], E)
+%   send_trigger_unified('send',  P, code, pulseMs, E)
+%   send_trigger_unified('set',   P, byte, [], E)
+%   send_trigger_unified('close', P, [], [], E)
 %
-% eeg_system:
-%   'BrainProducts'  → use IOPort-based TriggerBox code (original #1)
-%   'BioSemi'        → use MATLAB serial() code (original #2)
+% E is optional. If absent or empty, eye tracker messages are skipped.
+% E is the struct returned by eyetracker_manager('init', ...).
 %
-% Preserves:
-%   - persistent TB for each system
-%   - idle/reset levels (BrainProducts only)
-%   - mock mode support
-%   - minGap timing
-%   - pulse shaping logic
+% eeg_system is read from P.eeg_system:
+%   'brainproducts'  → IOPort-based TriggerBox
+%   'biosemi'        → MATLAB serial()
 %
 % -------------------------------------------------------------------------
 
 persistent TB_BP   % BrainProducts state
 persistent TB_BS   % BioSemi state
 
+%% ---- Defaults ----------------------------------------------------------
 if nargin < 4 || isempty(pulseMs)
     pulseMs = P.trigger.pulseMs;
 end
 
-if ismember(P.runProfile, 'test')
+% E is optional – safe default skips all eye tracker messages
+if nargin < 5 || isempty(E)
+    E = struct('system', 'none');
+end
+
+%% ---- Helper: should we send an eye tracker message? --------------------
+% True only when a real eye tracker is connected and profile requires it.
+sendET = ~strcmpi(E.system, 'none') && ...
+    ismember(P.runProfile, {'fullSetup', 'eyetracker'});
+
+%% ---- Test profile: skip everything -------------------------------------
+if ismember(P.runProfile, {'test'})
     fprintf('[TEST - No Trigger]\n');
     return;
 end
 
-if  ~ismember(P.runProfile, {'test', 'eyetracker'})
-    % =========================================================================
-    % CHOOSE SYSTEM
-    % =========================================================================
+%% ======================================================================
+if ~ismember(P.runProfile, {'test', 'eyetracker'})
+
+    % Choose system
     switch lower(P.eeg_system)
-        case {'brainproducts'}
-            SYSTEM = 'BP';
-        case {'biosemi'}
-            SYSTEM = 'BS';
+        case 'brainproducts',  SYSTEM = 'BP';
+        case 'biosemi',        SYSTEM = 'BS';
         otherwise
-            error('Unknown eeg_system: %s (expected BrainProducts or BioSemi)', eeg_system);
+            error('Unknown eeg_system: %s (expected brainproducts or biosemi)', P.eeg_system);
     end
 
-    % =========================================================================
-    % BRANCH TO EACH IMPLEMENTATION
-    % =========================================================================
-
     switch SYSTEM
-        % #########################################################################
-        % ### BRAIN PRODUCTS (TriggerBox / IOPort version)
-        % #########################################################################
-        case 'BP'
 
-            % Make persistent available locally
+        % #################################################################
+        % ### BRAIN PRODUCTS
+        % #################################################################
+        case 'BP'
             TB = TB_BP;
             switch lower(mode)
 
@@ -74,253 +75,210 @@ if  ~ismember(P.runProfile, {'test', 'eyetracker'})
                     minGap     = getfield_def(P.trigger,'minGapSec',0.010);
 
                     TB = struct( ...
-                        'fh',        [], ...
-                        'isOpen',    false, ...
-                        'mock',      false, ...
-                        'idle',      idleLevel, ...
-                        'reset',     resetLevel, ...
-                        'minGap',    minGap, ...
-                        'lastWriteT',0);
+                        'fh',[], 'isOpen',false, 'mock',false, ...
+                        'idle',idleLevel, 'reset',resetLevel, ...
+                        'minGap',minGap, 'lastWriteT',0);
 
                     if isfield(P,'mock') && isfield(P.mock,'triggerbox') && P.mock.triggerbox
-                        TB.mock   = true;
-                        TB.isOpen = true;
+                        TB.mock = true; TB.isOpen = true;
                         fprintf('[MOCK TriggerBox] init OK.\n');
-                        TB_BP = TB;
-                        return;
+                        TB_BP = TB; return;
                     end
 
                     opts = sprintf(['BaudRate=%d Parity=None DataBits=8 StopBits=1 ' ...
                         'DTR=0 RTS=0 ReceiveTimeout=0.01 SendTimeout=0.01 FlowControl=None'], baud);
-
                     try
                         [fh, errmsg] = IOPort('OpenSerialPort', port, opts);
                         if ~isempty(errmsg), error('%s', errmsg); end
-
-                        TB.fh     = fh;
-                        TB.isOpen = true;
-
+                        TB.fh = fh; TB.isOpen = true;
                         IOPort('Write', TB.fh, TB.idle, 1);
                         IOPort('Flush', TB.fh);
-
                         fprintf('[BrainProducts] Opened %s @%d baud.\n', port, baud);
-
                     catch ME
-                        TB = [];
-                        error('BrainProducts open error: %s', ME.message);
+                        TB = []; error('BrainProducts open error: %s', ME.message);
                     end
 
                 case 'send'
                     if isempty(TB) || ~TB.isOpen
-                        warning('BrainProducts not initialized.');
-                        return;
+                        warning('BrainProducts not initialized.'); return;
                     end
-
                     if TB.mock
-                        fprintf('[MOCK BrainProducts] code=%d pulseMs=%d\n',code,pulseMs);
-                        return;
+                        fprintf('[MOCK BrainProducts] code=%d pulseMs=%d\n', code, pulseMs); return;
                     end
 
                     nowT = GetSecs();
                     if nowT - TB.lastWriteT < TB.minGap
                         WaitSecs(TB.minGap - (nowT - TB.lastWriteT));
                     end
-
-                    byte = uint8(bitand(code,255));
+                    byte = uint8(bitand(code, 255));
                     IOPort('Write', TB.fh, byte, 1);
-
-                    if pulseMs > 0
-                        WaitSecs(pulseMs/1000);
-                    end
-
+                    if pulseMs > 0, WaitSecs(pulseMs/1000); end
                     IOPort('Write', TB.fh, TB.idle, 1);
                     TB.lastWriteT = GetSecs();
 
-                    % send same trigger to eyelink
-                    if ismember(P.runProfile,'fullSetup')
-                        Eyelink('Message', '%d', code);
+                    % Eye tracker message
+                    if sendET
+                        et_send_message(E, code);
                     end
 
                 case 'set'
                     if isempty(TB) || ~TB.isOpen
-                        warning('BrainProducts not initialized.');
-                        return;
+                        warning('BrainProducts not initialized.'); return;
                     end
-
                     if TB.mock
-                        fprintf('[MOCK BrainProducts SET] byte=%d\n', code);
-                        return;
+                        fprintf('[MOCK BrainProducts SET] byte=%d\n', code); return;
                     end
-
                     IOPort('Write', TB.fh, uint8(bitand(code,255)), 1);
                     TB.lastWriteT = GetSecs();
-                    
-                    % send same trigger to eyelink
-                    if ismember(P.runProfile,'fullSetup')
-                        Eyelink('Message', '%d', code);
+
+                    % Eye tracker message
+                    if sendET
+                        et_send_message(E, code);
                     end
+
                 case 'close'
                     if ~isempty(TB) && TB.isOpen && ~TB.mock
                         try
                             IOPort('Write', TB.fh, TB.reset, 1);
                             WaitSecs(0.01);
                             IOPort('Close', TB.fh);
-                        catch
-                        end
+                        catch, end
                     end
                     TB = [];
                     fprintf('[BrainProducts] closed.\n');
 
                 otherwise
-                    error('Unknown mode %s', mode);
+                    error('Unknown mode: %s', mode);
             end
-            TB_BP = TB;   % save state back to persistent
+            TB_BP = TB;
 
-        % #########################################################################
-        % ### BIOSEMI (serial/fwrite version)
-        % #########################################################################
+            % #################################################################
+            % ### BIOSEMI
+            % #################################################################
         case 'BS'
-
-            % Make persistent available locally
             TB = TB_BS;
-
             switch lower(mode)
 
-                % =================================================================
                 case 'init'
-                    % =================================================================
-                    port = P.trigger.comPort;                  % e.g., 'COM3' or '/dev/ttyUSB1'
+                    port = P.trigger.comPort;
                     if isfield(P,'trigger') && isfield(P.trigger,'serial') && isfield(P.trigger.serial,'baudBS')
                         baud = P.trigger.serial.baudBS;
                     else
-                        baud = 2000000;                                            % FIX: match working example
+                        baud = 2000000;
                     end
 
-                    TB = struct( ...
-                        'fh', [], ...
-                        'isOpen', false, ...
-                        'mock', false, ...
-                        'lastWriteT',0);
+                    TB = struct('fh',[], 'isOpen',false, 'mock',false, 'lastWriteT',0);
 
-                    % ---- mock mode ----
                     if isfield(P,'mock') && isfield(P.mock,'triggerbox') && P.mock.triggerbox
-                        TB.mock   = true;
-                        TB.isOpen = true;
-                        fprintf('[MOCK BioSemi] init OK (no hardware).\n');
-                        TB_BS = TB;
-                        return;
+                        TB.mock = true; TB.isOpen = true;
+                        fprintf('[MOCK BioSemi] init OK.\n');
+                        TB_BS = TB; return;
                     end
 
-                    % ---- open serial port ----
                     try
-                        TB.fh = serial(port, 'BaudRate', baud, 'DataBits', 8, ...
-                            'StopBits', 1, 'Parity', 'none', 'FlowControl', 'none');
+                        TB.fh = serial(port, 'BaudRate',baud, 'DataBits',8, ...
+                            'StopBits',1, 'Parity','none', 'FlowControl','none');
                         fopen(TB.fh);
                         TB.isOpen = true;
                         fprintf('[BioSemi] Serial opened %s @%d baud\n', port, baud);
                     catch ME
-                        TB = [];
-                        error('[BioSemi] Failed to open serial port %s: %s', port, ME.message);
+                        TB = []; error('[BioSemi] Failed to open %s: %s', port, ME.message);
                     end
 
-                    % =================================================================
                 case 'send'
-                    % =================================================================
                     if isempty(TB) || ~TB.isOpen
-                        warning('[BioSemi] Not initialized. Call send_trigger(''init'',P) first.');
-                        return;
+                        warning('[BioSemi] Not initialized.'); return;
                     end
-
                     if TB.mock
-                        fprintf('[MOCK BioSemi] code=%d pulseMs=%d @%.6f\n', code, pulseMs, GetSecs());
-                        return;
+                        fprintf('[MOCK BioSemi] code=%d pulseMs=%d\n', code, pulseMs); return;
                     end
 
-                    % optional minimum gap (10 ms)
                     nowT = GetSecs();
                     dt   = nowT - TB.lastWriteT;
-                    if dt < 0.01
-                        WaitSecs(0.01 - dt);
-                    end
+                    if dt < 0.01, WaitSecs(0.01 - dt); end
 
-                    % send trigger
                     fwrite(TB.fh, uint8(bitand(code,255)));
-
-                    % hold pulse if requested
                     if pulseMs > 0
-                        WaitSecs(pulseMs / 1000);
-                        fwrite(TB.fh, uint8(0));   % reset line to 0
+                        WaitSecs(pulseMs/1000);
+                        fwrite(TB.fh, uint8(0));
                     end
-
                     TB.lastWriteT = GetSecs();
 
-                    % send same trigger to eyelink
-                    if ismember(P.runProfile,'fullSetup') && ~ismember(code,[6 7 8])
-                        Eyelink('Message', '%d', code);
+                    % Eye tracker message (skip internal codes 6,7,8)
+                    if sendET && ~ismember(code, [6 7 8])
+                        et_send_message(E, code);
                     end
-                    % =================================================================
+
                 case 'set'
-                    % =================================================================
                     if isempty(TB) || ~TB.isOpen
-                        warning('[BioSemi] Not initialized.');
-                        return;
+                        warning('[BioSemi] Not initialized.'); return;
                     end
-
                     if TB.mock
-                        fprintf('[MOCK BioSemi SET] byte=%d @%.6f\n', code, GetSecs());
-                        return;
+                        fprintf('[MOCK BioSemi SET] byte=%d\n', code); return;
                     end
-
                     fwrite(TB.fh, uint8(bitand(code,255)));
                     TB.lastWriteT = GetSecs();
 
-                    % send same trigger to eyelink
-                    if ismember(P.runProfile,'fullSetup')
-                        Eyelink('Message', '%d', code);
+                    % Eye tracker message
+                    if sendET
+                        et_send_message(E, code);
                     end
-                    % =================================================================
+
                 case 'close'
-                    % =================================================================
                     if ~isempty(TB) && TB.isOpen && ~TB.mock
-                        try
-                            fclose(TB.fh);
-                            delete(TB.fh);
-                        catch
-                            % ignore errors
-                        end
+                        try, fclose(TB.fh); delete(TB.fh); catch, end
                     end
                     TB = [];
                     fprintf('[BioSemi] Serial closed.\n');
 
-                    % =================================================================
                 otherwise
                     error('send_trigger: unknown mode "%s"', mode);
             end
-            TB_BS = TB;   % save state back to persistent
+            TB_BS = TB;
     end
 
 elseif ismember(P.runProfile, {'eyetracker'})
-
+    % Eyetracker-only profile: no hardware trigger, just eye tracker message
     switch lower(mode)
-        % =================================================================
         case 'send'
-            if ~ismember(code,[6 7 8])
-                Eyelink('Message', '%d', code);
+            if sendET && ~ismember(code, [6 7 8])
+                et_send_message(E, code);
             end
     end
-    % if running in test mode
+
 else
-    % test profile: don't touch hardware
-    fprintf('[TEST - no Trigger] .\n');
+    fprintf('[TEST - no Trigger]\n');
 end
 
 
-% Helper
-    function v = getfield_def(S,f,d)
+% =========================================================================
+%  PRIVATE HELPERS
+% =========================================================================
+
+    function et_send_message(E, code)
+        % Route an event message to the active eye tracker.
+        % EyeLink: uses Eyelink('Message') – no E.device needed.
+        % Pupil Labs: uses E.device.send_event().
+        switch lower(E.system)
+            case 'eyelink'
+                Eyelink('Message', '%d', code);
+            case 'pupil_labs'
+                try
+                    E.device.send_event(num2str(code));
+                catch ME
+                    warning('[EyeTracker] send_event failed (code=%d): %s', code, ME.message);
+                end
+            case 'none'
+                % silent no-op
+        end
+    end
+
+    function v = getfield_def(S, f, d)
         if isstruct(S) && isfield(S,f) && ~isempty(S.(f))
             v = S.(f);
         else
             v = d;
         end
     end
+
 end
