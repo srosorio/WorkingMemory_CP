@@ -190,7 +190,7 @@ switch runProfile
         P.mock.responsebox        = true;
         P.trigger.mode            = 'TriggerBox';
         P.trigger.pulseMs         = 40;
-        P.trigger.comPort         = 'COM7';
+        P.trigger.comPort         = 'COM9';
         P.trigger.serial.baudBP   = 2000000;
         P.trigger.serial.baudBS   = 115200;
         P.trigger.idleLevel       = uint8(0);
@@ -216,7 +216,7 @@ switch runProfile
         P.mock.responsebox        = true;
         P.trigger.mode            = 'TriggerBox';
         P.trigger.pulseMs         = 40;
-        P.trigger.comPort         = 'COM7';
+        P.trigger.comPort         = 'COM9';
         P.trigger.serial.baudBP   = 2000000;
         P.trigger.serial.baudBS   = 115200;
         P.trigger.idleLevel       = uint8(0);
