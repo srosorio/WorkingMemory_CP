@@ -1,0 +1,10 @@
+file_version,subject,condition,session,task_start_time,block,trial,phase,event_name,event_code,wall_clock,t_rel_sec,duration_to_next,rt,value_shown,entered_value,correct,key_name,device,note,json,screen_index,ifi,refresh_hz,pd_used
+Sergio_G01_CNS-LLF5RV3D8,test,ses02-onstim,20260511_124021,2026-05-11 12:41:13.867090,NaN,NaN,,MIC_NOISEFLOOR,6,2026-05-11 12:41:17.219184,3.349793,20.391446,,,,,,keyboard,,{},2,NaN,NaN,1
+Sergio_G01_CNS-LLF5RV3D8,test,ses02-onstim,20260511_124021,2026-05-11 12:41:13.867090,NaN,NaN,,MIC_REC_SPEECH,7,2026-05-11 12:41:37.610163,23.741239,7.055980,,,,,,keyboard,,{},2,NaN,NaN,1
+Sergio_G01_CNS-LLF5RV3D8,test,ses02-onstim,20260511_124021,2026-05-11 12:41:13.867090,NaN,NaN,,SESSION_START,1,2026-05-11 12:42:21.137281,67.268072,0.004691,,,,,,keyboard,,{},2,0.016667,60.000000,1
+Sergio_G01_CNS-LLF5RV3D8,test,ses02-onstim,20260511_124021,2026-05-11 12:41:13.867090,NaN,NaN,,BLOCK_START,10,2026-05-11 12:42:21.139875,67.272763,0.125587,,,,,,keyboard,,{},2,0.016667,60.000000,1
+Sergio_G01_CNS-LLF5RV3D8,test,ses02-onstim,20260511_124021,2026-05-11 12:41:13.867090,NaN,0,reading,START_PAGE_ON,4,2026-05-11 12:42:21.307751,67.398350,0.059138,,,,,,keyboard,,"{""pd_used"":0}",2,0.016667,60.000000,1
+Sergio_G01_CNS-LLF5RV3D8,test,ses02-onstim,20260511_124021,2026-05-11 12:41:13.867090,NaN,0,reading,START_PAGE_ON,4,2026-05-11 12:42:21.307751,67.398350,9.899296,,,,,,keyboard,,"{""pd_used"":0}",2,0.016667,60.000000,1
+Sergio_G01_CNS-LLF5RV3D8,test,ses02-onstim,20260511_124021,2026-05-11 12:41:13.867090,NaN,0,reading,START_PAGE_ON,4,2026-05-11 12:42:21.307751,67.398350,10.326808,,,,,,keyboard,,"{""pd_used"":0}",2,0.016667,60.000000,1
+Sergio_G01_CNS-LLF5RV3D8,test,ses02-onstim,20260511_124021,2026-05-11 12:41:13.867090,NaN,0,reading,READING_START,23,2026-05-11 12:42:31.591104,77.725158,0.128947,,,,,,keyboard,,{},2,0.016667,60.000000,1
+Sergio_G01_CNS-LLF5RV3D8,test,ses02-onstim,20260511_124021,2026-05-11 12:41:13.867090,NaN,0,reading,DIGIT_READ1_ON,101,2026-05-11 12:42:31.762192,77.854105,NaN,,8,,,,keyboard,digit#1 shown,"{""value"":8,""note"":""digit#1 shown"",""pd_used"":1}",2,0.016667,60.000000,1
