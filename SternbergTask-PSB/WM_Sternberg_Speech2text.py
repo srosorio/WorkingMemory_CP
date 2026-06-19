@@ -14,12 +14,13 @@ print("FFmpeg now resolves to:", shutil.which("ffmpeg"))
 # --------------------------
 # --- Configuration ---
 # --------------------------
-participant_id = "cpeeg01"
-block          = 'b01'
+participant_id = "cpeeg02"
+session        = "ses03"
+block          = 'b02'
 runProfile     = "fullSetup"
 
 audio_folder = Path(
-    f"C:/Users/saosorio/Projects/WorkingMemory_CP/SternbergTask-PSB/output/{runProfile}/{participant_id}/offmed_offstim/{block}/AudioFiles"
+    f"C:/Users/saosorio/Projects/WorkingMemory_CP/SternbergTask-PSB/output/{runProfile}/{participant_id}/{session}/{block}/AudioFiles"
 )
 
 # --------------------------
