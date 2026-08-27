@@ -108,7 +108,7 @@ P.audio.noiseMultiplier = 5;
 
 %% -------------------- Screen --------------------------------------------
 try
-    whichScreen = max(Screen('Screens'));
+    whichScreen = 1; %max(Screen('Screens'));
 catch
     whichScreen = 0;
 end

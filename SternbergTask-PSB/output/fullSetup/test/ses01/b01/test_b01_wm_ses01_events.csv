@@ -1,0 +1,7 @@
+file_version,subject,condition,session,task_start_time,block,trial,phase,event_name,event_code,wall_clock,t_rel_sec,duration_to_next,rt,value_shown,entered_value,correct,key_name,device,note,json,screen_index,ifi,refresh_hz,pd_used
+Sergio_G01_CNS-LLF5RV3D8,test,ses01,20260827_122320,2026-08-27 12:23:39.005800,NaN,NaN,,MIC_NOISEFLOOR,6,2026-08-27 12:23:42.568847,3.561043,6.026407,,,,,,keyboard,,{},2,NaN,NaN,1
+Sergio_G01_CNS-LLF5RV3D8,test,ses01,20260827_122320,2026-08-27 12:23:39.005800,NaN,NaN,,MIC_REC_SPEECH,7,2026-08-27 12:23:48.595245,9.587450,7.359476,,,,,,keyboard,,{},2,NaN,NaN,1
+Sergio_G01_CNS-LLF5RV3D8,test,ses01,20260827_122320,2026-08-27 12:23:39.005800,NaN,NaN,,SESSION_START,1,2026-08-27 12:24:24.280454,45.272072,0.005307,,,,,,keyboard,,{},2,0.004167,240.000000,1
+Sergio_G01_CNS-LLF5RV3D8,test,ses01,20260827_122320,2026-08-27 12:23:39.005800,NaN,NaN,,BLOCK_START,10,2026-08-27 12:24:24.283535,45.277379,0.136805,,,,,,keyboard,,{},2,0.004167,240.000000,1
+Sergio_G01_CNS-LLF5RV3D8,test,ses01,20260827_122320,2026-08-27 12:23:39.005800,NaN,0,reading,START_PAGE_ON,4,2026-08-27 12:24:24.462427,45.414184,0.071360,,,,,,keyboard,,"{""pd_used"":0}",2,0.004167,240.000000,1
+Sergio_G01_CNS-LLF5RV3D8,test,ses01,20260827_122320,2026-08-27 12:23:39.005800,NaN,0,reading,START_PAGE_ON,4,2026-08-27 12:24:24.462427,45.414184,NaN,,,,,,keyboard,,"{""pd_used"":0}",2,0.004167,240.000000,1
