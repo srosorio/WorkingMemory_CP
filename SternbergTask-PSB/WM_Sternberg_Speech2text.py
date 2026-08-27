@@ -14,8 +14,8 @@ print("FFmpeg now resolves to:", shutil.which("ffmpeg"))
 # --------------------------
 # --- Configuration ---
 # --------------------------
-participant_id = "cpeeg01"
-session        = "ses03"
+participant_id = "cpeeg02"
+session        = "ses04"
 block          = 'b02'
 runProfile     = "fullSetup"
 
